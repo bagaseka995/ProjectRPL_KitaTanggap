@@ -12,7 +12,7 @@
                 </a>
                 <div class="hidden md:flex gap-3 text-sm">
                     <a href="{{ route('donatur.dashboard') }}" class="px-3 py-1 rounded bg-[#2E75B6] font-medium transition">
-                        Dashboard
+                        Beranda
                     </a>
                     <a href="{{ route('donatur.riwayat') }}" class="px-3 py-1 rounded hover:bg-[#2E75B6]/50 transition">
                         Riwayat Donasi
@@ -34,7 +34,7 @@
         {{-- Navigation for Mobile --}}
         <div class="flex md:hidden gap-2 mb-6 text-sm">
             <a href="{{ route('donatur.dashboard') }}" class="flex-1 text-center py-2 rounded-lg bg-[#1F4E79] text-white font-medium shadow-sm">
-                Dashboard
+                Beranda
             </a>
             <a href="{{ route('donatur.riwayat') }}" class="flex-1 text-center py-2 rounded-lg bg-white border text-gray-700 hover:bg-gray-50">
                 Riwayat Donasi

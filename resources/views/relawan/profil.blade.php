@@ -6,15 +6,21 @@
     <nav class="bg-[#1F4E79] text-white shadow">
         <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center gap-4">
-                <span class="font-bold text-lg">KitaTanggap — Relawan</span>
+                <a href="{{ route('dashboard') }}" class="font-bold text-lg hover:opacity-90 transition">
+                    KitaTanggap — Relawan
+                </a>
                 <div class="hidden md:flex gap-3 text-sm">
+                    <a href="{{ route('dashboard') }}" class="px-3 py-1 rounded hover:bg-[#2E75B6]/50 transition">Beranda</a>
                     <a href="{{ route('relawan.profil') }}" class="px-3 py-1 rounded bg-[#2E75B6] font-medium transition">Profil Saya</a>
                     <a href="{{ route('relawan.riwayat.index') }}" class="px-3 py-1 rounded hover:bg-[#2E75B6]/50 transition">Riwayat Misi</a>
                 </div>
             </div>
-            <form method="POST" action="{{ route('logout') }}">@csrf
-                <button class="text-sm opacity-75 hover:opacity-100 transition">Keluar</button>
-            </form>
+            <div class="flex items-center gap-4">
+                <a href="{{ route('pengaturan.notifikasi') }}" class="text-sm opacity-75 hover:opacity-100 transition hidden md:inline-block">Pengaturan</a>
+                <form method="POST" action="{{ route('logout') }}">@csrf
+                    <button class="text-sm opacity-75 hover:opacity-100 transition">Keluar</button>
+                </form>
+            </div>
         </div>
     </nav>
 
@@ -22,8 +28,9 @@
     <div class="max-w-3xl mx-auto px-4 py-8">
         {{-- Navigation for Mobile --}}
         <div class="flex md:hidden gap-2 mb-6 text-sm">
+            <a href="{{ route('dashboard') }}" class="flex-1 text-center py-2 rounded-lg bg-white border text-gray-700 hover:bg-gray-50">Beranda</a>
             <a href="{{ route('relawan.profil') }}" class="flex-1 text-center py-2 rounded-lg bg-[#1F4E79] text-white font-medium shadow-sm">Profil</a>
-            <a href="{{ route('relawan.riwayat.index') }}" class="flex-1 text-center py-2 rounded-lg bg-white border text-gray-700 hover:bg-gray-50">Riwayat Misi</a>
+            <a href="{{ route('relawan.riwayat.index') }}" class="flex-1 text-center py-2 rounded-lg bg-white border text-gray-700 hover:bg-gray-50">Misi</a>
         </div>
 
         {{-- Welcome header --}}

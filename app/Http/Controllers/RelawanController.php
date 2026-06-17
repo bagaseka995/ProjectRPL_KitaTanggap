@@ -38,10 +38,10 @@ class RelawanController extends Controller
             'pengalaman'        => $request->pengalaman,
             'lokasi_domisili'   => $request->lokasi_domisili,
             'ketersediaan'      => $request->boolean('ketersediaan'),
-            'status_verifikasi' => 'pending',   // selalu pending saat buat baru
+            'status_verifikasi' => 'terverifikasi', // langsung terverifikasi untuk kemudahan demo
         ]);
 
-        return back()->with('success', 'Profil relawan berhasil disimpan! Menunggu verifikasi admin.');
+        return back()->with('success', 'Profil relawan berhasil disimpan!');
     }
 
     /** PUT /relawan/profil — edit profil */
@@ -58,10 +58,10 @@ class RelawanController extends Controller
             'pengalaman'        => $request->pengalaman,
             'lokasi_domisili'   => $request->lokasi_domisili,
             'ketersediaan'      => $request->boolean('ketersediaan'),
-            'status_verifikasi' => 'pending',   // reset ke pending setelah edit
+            'status_verifikasi' => 'terverifikasi', // langsung terverifikasi untuk kemudahan demo
         ]);
 
-        return back()->with('success', 'Profil relawan berhasil diperbarui. Menunggu verifikasi ulang admin.');
+        return back()->with('success', 'Profil relawan berhasil diperbarui.');
     }
 
     /* ═══════════════════════════════════════════════════════════
