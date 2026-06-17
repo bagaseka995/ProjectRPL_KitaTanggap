@@ -90,6 +90,22 @@
                     Kelola Bencana <span aria-hidden="true">&rarr;</span>
                 </div>
             </a>
+
+            {{-- Card 5: Verifikasi Pengguna --}}
+            <a href="{{ route('admin.users.index') }}" class="group bg-white dark:bg-slate-800 p-8 rounded-3xl border border-gray-100 dark:border-slate-700 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_-4px_rgba(112,48,160,0.15)] dark:shadow-none dark:hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.5)] hover:border-[#7030A0]/30 dark:hover:border-slate-600 transition-all duration-300 text-left flex flex-col justify-between hover:-translate-y-1">
+                <div>
+                    <div class="w-14 h-14 rounded-2xl bg-purple-50 text-[#7030A0] flex items-center justify-center mb-6 group-hover:bg-gradient-to-br group-hover:from-[#7030A0] group-hover:to-purple-500 group-hover:text-white transition-all duration-300 shadow-sm">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white group-hover:text-[#7030A0] dark:group-hover:text-purple-400 transition-colors">Verifikasi Pengguna</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-2.5 leading-relaxed">Setujui (ACC) pendaftaran akun relawan dan donatur baru agar mereka dapat login dan beraktivitas.</p>
+                </div>
+                <div class="mt-8 text-sm font-semibold text-[#7030A0] dark:text-purple-400 flex items-center gap-1 group-hover:gap-2 transition-all">
+                    Verifikasi Akun <span aria-hidden="true">&rarr;</span>
+                </div>
+            </a>
         </div>
 
     </div>

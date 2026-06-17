@@ -11,6 +11,7 @@ use App\Http\Controllers\SertifikatController;
 use App\Http\Controllers\TransparencyController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotificationPreferenceController;
+use App\Http\Controllers\AdminUserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -171,6 +172,11 @@ Route::middleware(['auth'])->group(function () {
 
     // ─── Admin: Manajemen Relawan (REQ-13, REQ-14) ───────────
     Route::middleware('role:admin')->group(function () {
+        // Manajemen Pendaftaran User (ACC Email Pendaftar)
+        Route::get('/admin/users', [AdminUserController::class, 'index'])->name('admin.users.index');
+        Route::get('/api/admin/users', [AdminUserController::class, 'apiIndex'])->name('admin.users.api.index');
+        Route::patch('/api/admin/users/{id}/verifikasi', [AdminUserController::class, 'verifikasi'])->name('admin.users.api.verifikasi');
+
         Route::get('/admin/relawan', [RelawanController::class, 'adminIndex'])->name('admin.relawan.index');
         Route::get('/api/relawan', [RelawanController::class, 'index'])->name('admin.relawan.api.index');
         Route::patch('/api/relawan/{id}/verifikasi', [RelawanController::class, 'verifikasi'])->name('admin.relawan.api.verifikasi');

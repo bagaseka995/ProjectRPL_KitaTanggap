@@ -47,19 +47,19 @@ class AuthController extends Controller
             'password'          => $request->password,   // Model User cast 'password' => 'hashed'
             'no_telepon'        => $request->no_telepon,
             'peran'             => $request->peran,
-            'status_akun'       => 'aktif',
-            'email_verified_at' => now(),
+            'status_akun'       => 'pending',
+            'email_verified_at' => null,
         ]);
 
         if ($request->wantsJson()) {
             return response()->json([
                 'status'  => 'success',
-                'message' => 'Registrasi berhasil. Silakan masuk.',
+                'message' => 'Registrasi berhasil! Akun Anda sedang menunggu verifikasi oleh admin.',
             ], 201);
         }
 
         return redirect()->route('login')
-            ->with('success', 'Registrasi berhasil! Silakan masuk.');
+            ->with('success', 'Registrasi berhasil! Akun Anda sedang menunggu verifikasi oleh admin.');
     }
 
     /* ═══════════════════════════════════════════════════════════════
@@ -168,7 +168,7 @@ class AuthController extends Controller
         if ($user->status_akun === 'pending') {
             Auth::logout();
 
-            $message = 'Email belum diverifikasi. Cek inbox atau folder spam Anda.';
+            $message = 'Akun Anda belum aktif. Silakan tunggu verifikasi/persetujuan dari admin.';
 
             if ($request->wantsJson()) {
                 return response()->json(['status' => 'error', 'message' => $message], 403);
