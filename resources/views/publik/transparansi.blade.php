@@ -108,7 +108,7 @@
     </div>
     <div class="max-w-7xl mx-auto px-4 relative z-10">
         <div class="text-center">
-            <h1 class="text-3xl md:text-4xl font-extrabold mb-3 animate-in">📊 Transparansi Donasi</h1>
+            <h1 class="text-3xl md:text-4xl font-extrabold mb-3 animate-in">Transparansi Donasi</h1>
             <p class="text-white/80 text-lg max-w-2xl mx-auto animate-in stagger-1">
                 Kami berkomitmen untuk transparansi penuh. Lihat bagaimana setiap rupiah donasi Anda disalurkan untuk membantu korban bencana.
             </p>
