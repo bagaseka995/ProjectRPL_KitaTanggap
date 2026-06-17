@@ -250,4 +250,119 @@ class DonationController extends Controller
             'jumlah_donatur'  => $jumlahDonatur,
         ]);
     }
+
+    /**
+     * GET /api/donasi/check-status/{kode_transaksi}
+     * Cek status donasi ke Midtrans API (atau langsung database jika sudah terupdate)
+     */
+    public function checkStatus(string $kodeTransaksi, MidtransService $midtrans): JsonResponse
+    {
+        $donasi = Donasi::where('kode_transaksi', $kodeTransaksi)->first();
+
+        if (!$donasi) {
+            return response()->json(['message' => 'Transaksi tidak ditemukan.'], 404);
+        }
+
+        // Jika sudah sukses atau gagal di DB, langsung kembalikan
+        if ($donasi->status_bayar !== 'pending') {
+            return response()->json([
+                'status_bayar' => $donasi->status_bayar,
+                'summary'      => $this->getSummaryData($donasi->bencana_id),
+            ]);
+        }
+
+        // Jika masih pending, coba cek langsung ke Midtrans API
+        try {
+            $statusResponse = $midtrans->getTransactionStatus($kodeTransaksi);
+            $transactionStatus = $statusResponse['transaction_status'] ?? '';
+            $fraudStatus = $statusResponse['fraud_status'] ?? 'accept';
+            $transactionId = $statusResponse['transaction_id'] ?? '';
+
+            $newStatus = $midtrans->mapTransactionStatus($transactionStatus, $fraudStatus);
+
+            if ($newStatus !== $donasi->status_bayar) {
+                $donasi->update([
+                    'status_bayar'            => $newStatus,
+                    'midtrans_transaction_id' => $transactionId,
+                ]);
+
+                if ($newStatus === 'sukses') {
+                    $donasi->load('bencana');
+                    SendDonationReceiptJob::dispatch($donasi);
+                }
+            }
+
+            return response()->json([
+                'status_bayar' => $donasi->status_bayar,
+                'summary'      => $this->getSummaryData($donasi->bencana_id),
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error("Gagal cek status Midtrans untuk {$kodeTransaksi}: " . $e->getMessage());
+            // Tetap kembalikan status DB yang ada
+            return response()->json([
+                'status_bayar' => $donasi->status_bayar,
+                'summary'      => $this->getSummaryData($donasi->bencana_id),
+            ]);
+        }
+    }
+
+    /**
+     * POST /api/donasi/simulate-success/{kode_transaksi}
+     * Simulasikan pembayaran selesai secara manual (untuk testing).
+     */
+    public function simulateSuccess(string $kodeTransaksi): JsonResponse
+    {
+        $donasi = Donasi::where('kode_transaksi', $kodeTransaksi)->first();
+
+        if (!$donasi) {
+            return response()->json(['message' => 'Transaksi tidak ditemukan.'], 404);
+        }
+
+        if ($donasi->status_bayar !== 'sukses') {
+            $donasi->update([
+                'status_bayar' => 'sukses',
+            ]);
+
+            // Kirim email bukti donasi
+            try {
+                $donasi->load('bencana');
+                SendDonationReceiptJob::dispatch($donasi);
+            } catch (\Exception $e) {
+                Log::error("Gagal kirim email simulasi sukses: " . $e->getMessage());
+            }
+        }
+
+        return response()->json([
+            'status'  => 'success',
+            'summary' => $this->getSummaryData($donasi->bencana_id),
+        ]);
+    }
+
+    /**
+     * Helper untuk mendapatkan ringkasan statistik bencana.
+     */
+    private function getSummaryData(int $bencanaId): array
+    {
+        $bencana = Bencana::findOrFail($bencanaId);
+        $totalTerkumpul = Donasi::where('bencana_id', $bencanaId)
+            ->where('status_bayar', 'sukses')
+            ->sum('nominal');
+
+        $targetDana = (float) $bencana->target_dana;
+        $persentase = $targetDana > 0
+            ? min(100, round(($totalTerkumpul / $targetDana) * 100, 1))
+            : 0;
+
+        $jumlahDonatur = Donasi::where('bencana_id', $bencanaId)
+            ->where('status_bayar', 'sukses')
+            ->distinct('email_donatur')
+            ->count('email_donatur');
+
+        return [
+            'total_terkumpul' => (float) $totalTerkumpul,
+            'persentase'      => $persentase,
+            'jumlah_donatur'  => $jumlahDonatur,
+        ];
+    }
 }

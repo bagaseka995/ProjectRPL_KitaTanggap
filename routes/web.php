@@ -29,12 +29,40 @@ Route::get('/peta', [BencanaController::class, 'peta'])->name('peta');
 
 // Verifikasi Sertifikat Publik (REQ-18)
 Route::get('/verifikasi/{kode}', [SertifikatController::class, 'verifikasi'])->name('sertifikat.verifikasi');
+Route::get('/sertifikat/{kode}/unduh', [SertifikatController::class, 'unduh'])->name('sertifikat.unduh');
 
 // Halaman Donasi Publik (REQ-19)
 Route::get('/donasi/{bencana_id}', [DonationController::class, 'show'])->name('donasi.show');
 
 // Transparansi Donasi Publik (REQ-22)
 Route::get('/transparansi', [TransparencyController::class, 'index'])->name('transparansi');
+
+// ─── Storage File Serve (bypass symlink) ──────────────────────────────────
+// Serve file dari storage/app/public/ tanpa butuh 'php artisan storage:link'
+Route::get('/storage-file/{path}', function (string $path) {
+    // Decode URL-encoded path (untuk sub-folder)
+    $path = urldecode($path);
+
+    // Keamanan: pastikan tidak ada path traversal
+    if (str_contains($path, '..') || str_starts_with($path, '/')) {
+        abort(403, 'Path tidak valid.');
+    }
+
+    $disk = \Illuminate\Support\Facades\Storage::disk('public');
+
+    if (!$disk->exists($path)) {
+        abort(404, 'File tidak ditemukan.');
+    }
+
+    $mimeType = $disk->mimeType($path);
+    $content  = $disk->get($path);
+
+    return response($content, 200, [
+        'Content-Type'        => $mimeType,
+        'Content-Disposition' => 'inline; filename="' . basename($path) . '"',
+        'Cache-Control'       => 'public, max-age=86400',
+    ]);
+})->where('path', '.*')->name('storage.serve');
 
 // ─── Autentikasi (REQ-01 s/d REQ-06) ────────────────────────────────────
 Route::middleware('guest')->group(function () {
@@ -154,9 +182,18 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('/api/penugasan/{id}/status', [PenugasanController::class, 'updateStatus'])->name('admin.penugasan.api.status');
         Route::patch('/api/penugasan/{id}/selesai', [PenugasanController::class, 'selesai'])->name('admin.penugasan.api.selesai');
 
+        // ─── Manajemen Bencana Admin (REQ-07 s/d REQ-11) ─────────
+        Route::get('/admin/bencana', [BencanaController::class, 'adminIndex'])->name('admin.bencana.index');
+        Route::get('/admin/bencana/create', [BencanaController::class, 'adminCreate'])->name('admin.bencana.create');
+        Route::post('/admin/bencana', [BencanaController::class, 'adminStore'])->name('admin.bencana.store');
+        Route::get('/admin/bencana/{id}/edit', [BencanaController::class, 'adminEdit'])->name('admin.bencana.edit');
+        Route::put('/admin/bencana/{id}', [BencanaController::class, 'adminUpdate'])->name('admin.bencana.update');
+        Route::delete('/admin/bencana/{id}', [BencanaController::class, 'adminDestroy'])->name('admin.bencana.destroy');
+        Route::patch('/admin/bencana/{id}/toggle', [BencanaController::class, 'adminToggle'])->name('admin.bencana.toggle');
+
         // Laporan Penggunaan Dana & Distribusi Bantuan (REQ-24)
         Route::resource('/admin/laporan-distribusi', AdminLaporanController::class)
-            ->only(['index', 'create', 'store'])
+            ->only(['index', 'create', 'store', 'edit', 'update', 'destroy'])
             ->names('admin.laporan-distribusi');
     });
 });

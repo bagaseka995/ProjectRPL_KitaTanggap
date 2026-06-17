@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" x-data="themeHandler()" :class="{ 'dark': isDark }">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +12,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: { extend: {
                 colors: {
                     primary:   { DEFAULT: '#1F4E79', light: '#2E75B6', dark: '#163859' },
@@ -73,6 +74,20 @@
             color: white;
             box-shadow: 0 4px 12px rgba(31,78,121,.3);
         }
+        .dark .amount-btn {
+            border-color: #475569;
+            color: #f1f5f9;
+        }
+        .dark .amount-btn:hover {
+            border-color: #3b82f6;
+            background: #1e293b;
+        }
+        .dark .amount-btn.active {
+            border-color: #3b82f6;
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 4px 12px rgba(59,130,246,.3);
+        }
 
         /* ─── Input Focus ─── */
         .input-focus:focus {
@@ -116,49 +131,49 @@
             animation: checkmark .6s ease .3s forwards;
         }
     </style>
+    <script>
+        function themeHandler() {
+            return {
+                isDark: false,
+                init() {
+                    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                        this.isDark = true;
+                    } else {
+                        this.isDark = false;
+                    }
+                    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                        if (!localStorage.getItem('theme')) {
+                            this.isDark = e.matches;
+                        }
+                    });
+                },
+                toggleTheme() {
+                    this.isDark = !this.isDark;
+                    localStorage.setItem('theme', this.isDark ? 'dark' : 'light');
+                }
+            }
+        }
+    </script>
 </head>
-<body class="bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30 min-h-screen">
+<body class="bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30 dark:from-slate-900 dark:via-slate-800/80 dark:to-indigo-950/40 text-gray-800 dark:text-gray-100 transition-colors duration-300 min-h-screen">
 
 {{-- ═══ NAVBAR ═══ --}}
-<nav class="bg-[#1F4E79] text-white shadow-lg sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-        <a href="/" class="flex items-center gap-2 font-bold text-lg tracking-tight">
-            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064"/>
-            </svg>
-            KitaTanggap
-        </a>
-        <div class="flex items-center gap-4 text-sm">
-            <a href="/peta" class="hover:text-white/80 transition">Peta Bencana</a>
-            @auth
-                <a href="{{ route(auth()->user()->peran.'.dashboard') }}"
-                   class="bg-white/15 hover:bg-white/25 px-3 py-1.5 rounded-lg transition">Dashboard</a>
-                <form method="POST" action="{{ route('logout') }}" class="inline">
-                    @csrf
-                    <button class="opacity-70 hover:opacity-100 transition text-sm">Keluar</button>
-                </form>
-            @else
-                <a href="{{ route('login') }}" class="bg-white/15 hover:bg-white/25 px-3 py-1.5 rounded-lg transition">Masuk</a>
-                <a href="{{ route('register') }}" class="bg-[#C55A11] hover:bg-[#a34a0f] px-3 py-1.5 rounded-lg transition font-semibold">Daftar</a>
-            @endauth
-        </div>
-    </div>
-</nav>
+@include('layouts.partials.navbar-main')
+@include('layouts.partials.navbar-sub')
 
 {{-- ═══ BREADCRUMB ═══ --}}
 <div class="max-w-7xl mx-auto px-4 py-3">
-    <nav class="text-sm text-gray-500">
-        <a href="/" class="hover:text-primary transition">Beranda</a>
+    <nav class="text-sm text-gray-500 dark:text-gray-400">
+        <a href="/" class="hover:text-primary dark:hover:text-blue-400 transition">Beranda</a>
         <span class="mx-2">›</span>
-        <a href="/peta" class="hover:text-primary transition">Peta Bencana</a>
+        <a href="/peta" class="hover:text-primary dark:hover:text-blue-400 transition">Peta Bencana</a>
         <span class="mx-2">›</span>
-        <span class="text-gray-800 font-medium">Donasi</span>
+        <span class="text-gray-800 dark:text-gray-200 font-medium">Donasi</span>
     </nav>
 </div>
 
 {{-- ═══ KONTEN UTAMA ═══ --}}
-<div class="max-w-7xl mx-auto px-4 pb-12" x-data="donasiApp()" x-init="init()">
+<div class="max-w-7xl mx-auto px-4 pb-12" x-data="donasiApp()">
 
     {{-- ─── BENCANA SUDAH TIDAK AKTIF ─── --}}
     @if(!$bencana->status_aktif)
@@ -183,7 +198,7 @@
         <div class="lg:col-span-1 space-y-6">
 
             {{-- Card: Detail Bencana --}}
-            <div class="animate-in bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden card-hover">
+            <div class="animate-in bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm overflow-hidden card-hover transition-colors">
                 {{-- Header Gradient --}}
                 <div class="bg-gradient-to-r from-[#1F4E79] to-[#2E75B6] p-6 text-white">
                     <div class="flex items-center gap-2 mb-3">
@@ -199,20 +214,20 @@
                 </div>
 
                 <div class="p-5 space-y-3">
-                    <div class="flex items-center gap-3 text-sm text-gray-600">
-                        <svg class="w-4 h-4 text-primary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
+                        <svg class="w-4 h-4 text-primary dark:text-blue-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                         </svg>
                         <span>{{ $bencana->lokasi }}</span>
                     </div>
-                    <div class="flex items-center gap-3 text-sm text-gray-600">
-                        <svg class="w-4 h-4 text-primary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
+                        <svg class="w-4 h-4 text-primary dark:text-blue-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
                         <span>{{ $bencana->tanggal_kejadian?->format('d F Y') }}</span>
                     </div>
                     @if($bencana->deskripsi)
-                    <p class="text-sm text-gray-500 leading-relaxed pt-2 border-t border-gray-100">
+                    <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed pt-2 border-t border-gray-100 dark:border-slate-700">
                         {{ Str::limit($bencana->deskripsi, 200) }}
                     </p>
                     @endif
@@ -220,51 +235,51 @@
             </div>
 
             {{-- Card: Progress Donasi --}}
-            <div class="animate-in-delay-1 bg-white rounded-2xl border border-gray-200 shadow-sm p-6 card-hover">
-                <h2 class="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                    <span class="w-2 h-2 bg-primary rounded-full relative pulse-ring text-primary"></span>
+            <div class="animate-in-delay-1 bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm p-6 card-hover transition-colors">
+                <h2 class="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2">
+                    <span class="w-2 h-2 bg-primary dark:bg-blue-500 rounded-full relative pulse-ring text-primary dark:text-blue-500"></span>
                     Progress Donasi
                 </h2>
 
                 {{-- Progress Bar --}}
                 <div class="relative">
-                    <div class="w-full bg-gray-100 rounded-full h-4 overflow-hidden">
-                        <div class="progress-fill h-full rounded-full relative" style="width: {{ $persentase }}%"></div>
+                    <div class="w-full bg-gray-100 dark:bg-slate-700 rounded-full h-4 overflow-hidden">
+                        <div class="progress-fill h-full rounded-full relative" :style="'width: ' + persentase + '%'"></div>
                     </div>
-                    <div class="mt-2 flex justify-between text-xs text-gray-500">
-                        <span>{{ $persentase }}%</span>
+                    <div class="mt-2 flex justify-between text-xs text-gray-500 dark:text-gray-400">
+                        <span x-text="persentase + '%'">{{ $persentase }}%</span>
                         <span>Target: Rp {{ number_format($targetDana, 0, ',', '.') }}</span>
                     </div>
                 </div>
 
                 {{-- Stats --}}
                 <div class="grid grid-cols-2 gap-4 mt-5">
-                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 text-center">
-                        <p class="text-xs text-gray-500 mb-1">Terkumpul</p>
-                        <p class="text-lg font-bold text-primary">Rp {{ number_format($totalTerkumpul, 0, ',', '.') }}</p>
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-700 dark:to-slate-600 rounded-xl p-4 text-center">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Terkumpul</p>
+                        <p class="text-lg font-bold text-primary dark:text-blue-400" x-text="'Rp ' + formatRupiah(totalTerkumpul)">Rp {{ number_format($totalTerkumpul, 0, ',', '.') }}</p>
                     </div>
-                    <div class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-4 text-center">
-                        <p class="text-xs text-gray-500 mb-1">Donatur</p>
-                        <p class="text-lg font-bold text-emerald-700">{{ $jumlahDonatur }}</p>
+                    <div class="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-xl p-4 text-center">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Donatur</p>
+                        <p class="text-lg font-bold text-emerald-700 dark:text-emerald-400" x-text="jumlahDonatur">{{ $jumlahDonatur }}</p>
                     </div>
                 </div>
             </div>
 
             {{-- Card: Donasi Terbaru --}}
             @if($donasiTerbaru->count() > 0)
-            <div class="animate-in-delay-2 bg-white rounded-2xl border border-gray-200 shadow-sm p-6 card-hover">
-                <h2 class="text-sm font-semibold text-gray-800 mb-4">💝 Donasi Terbaru</h2>
+            <div class="animate-in-delay-2 bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm p-6 card-hover transition-colors">
+                <h2 class="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-4">💝 Donasi Terbaru</h2>
                 <div class="space-y-3">
                     @foreach($donasiTerbaru as $d)
-                    <div class="flex items-center gap-3 py-2 {{ !$loop->last ? 'border-b border-gray-50' : '' }}">
+                    <div class="flex items-center gap-3 py-2 {{ !$loop->last ? 'border-b border-gray-50 dark:border-slate-700' : '' }}">
                         <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-xs font-bold shrink-0">
                             {{ strtoupper(substr($d->nama_donatur, 0, 1)) }}
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-gray-800 truncate">{{ $d->nama_donatur }}</p>
-                            <p class="text-xs text-gray-400">{{ $d->created_at->diffForHumans() }}</p>
+                            <p class="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">{{ $d->nama_donatur }}</p>
+                            <p class="text-xs text-gray-400 dark:text-gray-500">{{ $d->created_at->diffForHumans() }}</p>
                         </div>
-                        <span class="text-sm font-semibold text-primary whitespace-nowrap">{{ $d->nominal_formatted }}</span>
+                        <span class="text-sm font-semibold text-primary dark:text-blue-400 whitespace-nowrap">{{ $d->nominal_formatted }}</span>
                     </div>
                     @endforeach
                 </div>
@@ -274,7 +289,7 @@
 
         {{-- ═══ KOLOM KANAN: FORM DONASI + MIDTRANS ═══ --}}
         <div class="lg:col-span-2">
-            <div class="animate-in-delay-1 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="animate-in-delay-1 bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm overflow-hidden transition-colors">
 
                 {{-- Header Form --}}
                 <div class="bg-gradient-to-r from-[#1F4E79] to-[#2E75B6] p-6">
@@ -296,13 +311,13 @@
 
                             {{-- Nominal Donasi --}}
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-3">Nominal Donasi</label>
+                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Nominal Donasi</label>
 
                                 {{-- Quick Amount Buttons --}}
                                 <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-3">
                                     <template x-for="amount in quickAmounts" :key="amount">
                                         <button type="button"
-                                                class="amount-btn rounded-xl py-2.5 text-sm font-semibold text-center"
+                                                class="amount-btn rounded-xl py-2.5 text-sm font-semibold text-center bg-white dark:bg-slate-800"
                                                 :class="{ 'active': nominal == amount }"
                                                 @click="setNominal(amount)"
                                                 x-text="formatShort(amount)">
@@ -312,30 +327,30 @@
 
                                 {{-- Custom Amount Input --}}
                                 <div class="relative">
-                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-sm">Rp</span>
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 font-semibold text-sm">Rp</span>
                                     <input type="text" id="input-nominal"
                                            x-model="nominalDisplay"
                                            @input="onNominalInput($event)"
                                            @focus="$event.target.select()"
-                                           class="input-focus w-full pl-11 pr-4 py-3.5 border-2 border-gray-200 rounded-xl text-lg font-semibold text-gray-800 transition"
+                                           class="input-focus w-full pl-11 pr-4 py-3.5 border-2 border-gray-200 dark:border-slate-600 bg-transparent rounded-xl text-lg font-semibold text-gray-800 dark:text-white transition"
                                            placeholder="Masukkan nominal lain">
                                 </div>
-                                <p class="text-xs text-gray-400 mt-1.5">Minimal donasi: Rp 10.000</p>
+                                <p class="text-xs text-gray-400 dark:text-gray-500 mt-1.5">Minimal donasi: Rp 10.000</p>
                             </div>
 
                             {{-- Nama & Email (2 columns) --}}
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
-                                    <label for="input-nama" class="block text-sm font-semibold text-gray-700 mb-1.5">Nama Donatur</label>
+                                    <label for="input-nama" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Nama Donatur</label>
                                     <input type="text" id="input-nama" x-model="form.nama_donatur"
-                                           class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm transition"
+                                           class="input-focus w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 bg-transparent rounded-xl text-sm transition text-gray-900 dark:text-white"
                                            placeholder="Nama lengkap Anda"
                                            @if(auth()->check()) value="{{ auth()->user()->nama_lengkap }}" @endif>
                                 </div>
                                 <div>
-                                    <label for="input-email" class="block text-sm font-semibold text-gray-700 mb-1.5">Email</label>
+                                    <label for="input-email" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Email</label>
                                     <input type="email" id="input-email" x-model="form.email_donatur"
-                                           class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm transition"
+                                           class="input-focus w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 bg-transparent rounded-xl text-sm transition text-gray-900 dark:text-white"
                                            placeholder="email@contoh.com"
                                            @if(auth()->check()) value="{{ auth()->user()->email }}" @endif>
                                 </div>
@@ -343,47 +358,47 @@
 
                             {{-- Metode Pembayaran --}}
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-3">Metode Pembayaran</label>
+                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Metode Pembayaran</label>
                                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                     {{-- Transfer Bank --}}
                                     <label class="relative cursor-pointer">
                                         <input type="radio" name="metode" value="transfer_bank" x-model="form.metode_pembayaran" class="peer sr-only">
-                                        <div class="peer-checked:border-primary peer-checked:bg-blue-50 border-2 border-gray-200 rounded-xl p-4 text-center transition hover:border-primary/50">
-                                            <div class="w-10 h-10 mx-auto mb-2 bg-blue-100 rounded-xl flex items-center justify-center">
-                                                <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <div class="peer-checked:border-primary peer-checked:bg-blue-50 dark:peer-checked:bg-slate-700/50 dark:peer-checked:border-blue-500 border-2 border-gray-200 dark:border-slate-600 rounded-xl p-4 text-center transition hover:border-primary/50 dark:hover:border-blue-500/50">
+                                            <div class="w-10 h-10 mx-auto mb-2 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                                                <svg class="w-5 h-5 text-primary dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                                                 </svg>
                                             </div>
-                                            <p class="text-sm font-semibold text-gray-700">Transfer Bank</p>
-                                            <p class="text-xs text-gray-400 mt-0.5">BCA, BNI, BRI, Permata</p>
+                                            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Transfer Bank</p>
+                                            <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">BCA, BNI, BRI, Permata</p>
                                         </div>
                                     </label>
 
                                     {{-- E-Wallet --}}
                                     <label class="relative cursor-pointer">
                                         <input type="radio" name="metode" value="e_wallet" x-model="form.metode_pembayaran" class="peer sr-only">
-                                        <div class="peer-checked:border-primary peer-checked:bg-blue-50 border-2 border-gray-200 rounded-xl p-4 text-center transition hover:border-primary/50">
-                                            <div class="w-10 h-10 mx-auto mb-2 bg-emerald-100 rounded-xl flex items-center justify-center">
-                                                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <div class="peer-checked:border-primary peer-checked:bg-blue-50 dark:peer-checked:bg-slate-700/50 dark:peer-checked:border-blue-500 border-2 border-gray-200 dark:border-slate-600 rounded-xl p-4 text-center transition hover:border-primary/50 dark:hover:border-blue-500/50">
+                                            <div class="w-10 h-10 mx-auto mb-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center">
+                                                <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                                                 </svg>
                                             </div>
-                                            <p class="text-sm font-semibold text-gray-700">E-Wallet</p>
-                                            <p class="text-xs text-gray-400 mt-0.5">GoPay, ShopeePay</p>
+                                            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">E-Wallet</p>
+                                            <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">GoPay, ShopeePay</p>
                                         </div>
                                     </label>
 
                                     {{-- Kartu Kredit --}}
                                     <label class="relative cursor-pointer">
                                         <input type="radio" name="metode" value="kartu_kredit" x-model="form.metode_pembayaran" class="peer sr-only">
-                                        <div class="peer-checked:border-primary peer-checked:bg-blue-50 border-2 border-gray-200 rounded-xl p-4 text-center transition hover:border-primary/50">
-                                            <div class="w-10 h-10 mx-auto mb-2 bg-purple-100 rounded-xl flex items-center justify-center">
-                                                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <div class="peer-checked:border-primary peer-checked:bg-blue-50 dark:peer-checked:bg-slate-700/50 dark:peer-checked:border-blue-500 border-2 border-gray-200 dark:border-slate-600 rounded-xl p-4 text-center transition hover:border-primary/50 dark:hover:border-blue-500/50">
+                                            <div class="w-10 h-10 mx-auto mb-2 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center">
+                                                <svg class="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                                                 </svg>
                                             </div>
-                                            <p class="text-sm font-semibold text-gray-700">Kartu Kredit</p>
-                                            <p class="text-xs text-gray-400 mt-0.5">Visa, Mastercard</p>
+                                            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Kartu Kredit</p>
+                                            <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Visa, Mastercard</p>
                                         </div>
                                     </label>
                                 </div>
@@ -391,18 +406,18 @@
 
                             {{-- Pesan (opsional) --}}
                             <div>
-                                <label for="input-pesan" class="block text-sm font-semibold text-gray-700 mb-1.5">
-                                    Pesan <span class="font-normal text-gray-400">(opsional)</span>
+                                <label for="input-pesan" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
+                                    Pesan <span class="font-normal text-gray-400 dark:text-gray-500">(opsional)</span>
                                 </label>
                                 <textarea id="input-pesan" x-model="form.pesan" rows="3"
-                                          class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm transition resize-none"
+                                          class="input-focus w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 bg-transparent rounded-xl text-sm transition resize-none text-gray-900 dark:text-white"
                                           placeholder="Semoga lekas pulih..." maxlength="500"></textarea>
-                                <p class="text-xs text-gray-400 mt-1 text-right" x-text="(form.pesan || '').length + '/500'"></p>
+                                <p class="text-xs text-gray-400 dark:text-gray-500 mt-1 text-right" x-text="(form.pesan || '').length + '/500'"></p>
                             </div>
 
                             {{-- Error Message --}}
                             <div x-show="errorMsg" x-cloak
-                                 class="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700 flex items-start gap-3">
+                                 class="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800/50 rounded-xl p-4 text-sm text-red-700 dark:text-red-400 flex items-start gap-3">
                                 <svg class="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -439,27 +454,27 @@
                             </button>
 
                             {{-- Info Keamanan --}}
-                            <div class="flex items-center justify-center gap-2 text-xs text-gray-400 pt-2">
+                            <div class="flex items-center justify-center gap-2 text-xs text-gray-400 dark:text-gray-500 pt-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                                 </svg>
-                                Pembayaran aman & terenkripsi melalui <strong class="text-gray-600 ml-0.5">Midtrans</strong>
+                                Pembayaran aman & terenkripsi melalui <strong class="text-gray-600 dark:text-gray-400 ml-0.5">Midtrans</strong>
                             </div>
                         </form>
                     </div>
 
                     {{-- ═══ STATE: SUKSES ═══ --}}
                     <div x-show="state === 'success'" x-cloak x-transition class="text-center py-8">
-                        <div class="w-20 h-20 mx-auto mb-6 bg-emerald-100 rounded-full flex items-center justify-center">
-                            <svg class="w-10 h-10 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                        <div class="w-20 h-20 mx-auto mb-6 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center">
+                            <svg class="w-10 h-10 text-emerald-500 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                 <path class="checkmark-path" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
                             </svg>
                         </div>
-                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Terima Kasih! 🎉</h3>
-                        <p class="text-gray-500 mb-2">Donasi Anda telah berhasil diproses.</p>
-                        <p class="text-sm text-gray-400 mb-6">
-                            Kode transaksi: <strong class="text-primary" x-text="kodeTransaksi"></strong>
+                        <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Terima Kasih! 🎉</h3>
+                        <p class="text-gray-500 dark:text-gray-400 mb-2">Donasi Anda telah berhasil diproses.</p>
+                        <p class="text-sm text-gray-400 dark:text-gray-500 mb-6">
+                            Kode transaksi: <strong class="text-primary dark:text-blue-400" x-text="kodeTransaksi"></strong>
                         </p>
                         <div class="flex flex-col sm:flex-row gap-3 justify-center">
                             <button @click="resetForm()"
@@ -467,7 +482,7 @@
                                 Donasi Lagi
                             </button>
                             <a href="/peta"
-                               class="px-6 py-2.5 border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition">
+                               class="px-6 py-2.5 border-2 border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 transition">
                                 Kembali ke Peta
                             </a>
                         </div>
@@ -475,23 +490,49 @@
 
                     {{-- ═══ STATE: PENDING ═══ --}}
                     <div x-show="state === 'pending'" x-cloak x-transition class="text-center py-8">
-                        <div class="w-20 h-20 mx-auto mb-6 bg-yellow-100 rounded-full flex items-center justify-center">
-                            <svg class="w-10 h-10 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <div class="w-20 h-20 mx-auto mb-6 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center">
+                            <svg class="w-10 h-10 text-yellow-500 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
-                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Menunggu Pembayaran</h3>
-                        <p class="text-gray-500 mb-2">Silakan selesaikan pembayaran Anda sesuai instruksi.</p>
-                        <p class="text-sm text-gray-400 mb-6">
-                            Kode transaksi: <strong class="text-primary" x-text="kodeTransaksi"></strong>
+                        <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Menunggu Pembayaran</h3>
+                        <p class="text-gray-500 dark:text-gray-400 mb-2">Silakan selesaikan pembayaran Anda sesuai instruksi.</p>
+                        <p class="text-sm text-gray-400 dark:text-gray-500 mb-6">
+                            Kode transaksi: <strong class="text-primary dark:text-blue-400" x-text="kodeTransaksi"></strong>
                         </p>
-                        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                        <div class="flex flex-col sm:flex-row gap-3 justify-center mb-6">
+                            <button @click="checkStatus()"
+                                    :disabled="loadingStatus"
+                                    class="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl transition flex items-center justify-center gap-2 shadow-md">
+                                <svg x-show="loadingStatus" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                                </svg>
+                                <svg x-show="!loadingStatus" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-2 5a2 2 0 11-4 0 2 2 0 014 0zM9 17h6"/>
+                                </svg>
+                                Cek Status
+                            </button>
+                            <button @click="simulateSuccess()"
+                                    :disabled="loadingSuccess"
+                                    class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition flex items-center justify-center gap-2 shadow-md">
+                                <svg x-show="loadingSuccess" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                                </svg>
+                                <svg x-show="!loadingSuccess" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                Pembayaran Selesai
+                            </button>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-3 justify-center border-t border-gray-100 dark:border-slate-700/50 pt-6">
                             <button @click="resetForm()"
                                     class="px-6 py-2.5 bg-primary text-white font-semibold rounded-xl hover:bg-primary-dark transition">
                                 Donasi Baru
                             </button>
                             <a href="/peta"
-                               class="px-6 py-2.5 border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition">
+                               class="px-6 py-2.5 border-2 border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800 transition">
                                 Kembali ke Peta
                             </a>
                         </div>
@@ -499,13 +540,13 @@
 
                     {{-- ═══ STATE: ERROR ═══ --}}
                     <div x-show="state === 'error'" x-cloak x-transition class="text-center py-8">
-                        <div class="w-20 h-20 mx-auto mb-6 bg-red-100 rounded-full flex items-center justify-center">
-                            <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <div class="w-20 h-20 mx-auto mb-6 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
+                            <svg class="w-10 h-10 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
                             </svg>
                         </div>
-                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Pembayaran Gagal</h3>
-                        <p class="text-gray-500 mb-6">Terjadi kesalahan saat memproses pembayaran Anda. Silakan coba lagi.</p>
+                        <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Pembayaran Gagal</h3>
+                        <p class="text-gray-500 dark:text-gray-400 mb-6">Terjadi kesalahan saat memproses pembayaran Anda. Silakan coba lagi.</p>
                         <button @click="resetForm()"
                                 class="px-6 py-2.5 bg-primary text-white font-semibold rounded-xl hover:bg-primary-dark transition">
                             Coba Lagi
@@ -539,6 +580,12 @@ function donasiApp() {
         loading: false,
         errorMsg: '',
         kodeTransaksi: '',
+
+        totalTerkumpul: {{ $totalTerkumpul }},
+        persentase: {{ $persentase }},
+        jumlahDonatur: {{ $jumlahDonatur }},
+        loadingStatus: false,
+        loadingSuccess: false,
 
         // Quick amount options
         quickAmounts: [25000, 50000, 100000, 250000, 500000, 1000000],
@@ -655,6 +702,8 @@ function donasiApp() {
                     onSuccess: (result) => {
                         console.log('Payment success:', result);
                         this.state = 'success';
+                        // Refresh status untuk update progress bar secara instan
+                        this.checkStatus();
                     },
                     onPending: (result) => {
                         console.log('Payment pending:', result);
@@ -665,8 +714,8 @@ function donasiApp() {
                         this.state = 'error';
                     },
                     onClose: () => {
-                        // User menutup popup tanpa menyelesaikan pembayaran
                         console.log('Snap popup closed by user');
+                        this.state = 'pending';
                     },
                 });
 
@@ -674,6 +723,74 @@ function donasiApp() {
                 console.error('Create order error:', err);
                 this.errorMsg = 'Gagal menghubungi server. Periksa koneksi internet Anda.';
                 this.loading = false;
+            }
+        },
+
+        /**
+         * Cek status pembayaran ke server
+         */
+        async checkStatus() {
+            if (!this.kodeTransaksi) return;
+            this.loadingStatus = true;
+            try {
+                const res = await fetch(`/api/donasi/check-status/${this.kodeTransaksi}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    }
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    if (data.status_bayar === 'sukses') {
+                        this.state = 'success';
+                        this.totalTerkumpul = data.summary.total_terkumpul;
+                        this.persentase = data.summary.persentase;
+                        this.jumlahDonatur = data.summary.jumlah_donatur;
+                    } else if (data.status_bayar === 'gagal') {
+                        this.state = 'error';
+                    } else {
+                        alert('Pembayaran masih pending. Silakan selesaikan pembayaran.');
+                    }
+                } else {
+                    alert(data.message || 'Gagal mengecek status pembayaran.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Terjadi kesalahan koneksi.');
+            } finally {
+                this.loadingStatus = false;
+            }
+        },
+
+        /**
+         * Simulasikan pembayaran selesai
+         */
+        async simulateSuccess() {
+            if (!this.kodeTransaksi) return;
+            this.loadingSuccess = true;
+            try {
+                const res = await fetch(`/api/donasi/simulate-success/${this.kodeTransaksi}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    }
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    this.state = 'success';
+                    this.totalTerkumpul = data.summary.total_terkumpul;
+                    this.persentase = data.summary.persentase;
+                    this.jumlahDonatur = data.summary.jumlah_donatur;
+                } else {
+                    alert(data.message || 'Gagal memproses simulasi pembayaran.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Terjadi kesalahan koneksi.');
+            } finally {
+                this.loadingSuccess = false;
             }
         },
 

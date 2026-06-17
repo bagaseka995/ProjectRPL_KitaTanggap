@@ -8,30 +8,31 @@
 
     {{-- Latar dekorasi --}}
     <div class="absolute inset-0 overflow-hidden pointer-events-none">
-        <div class="absolute -top-40 -right-40 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
-        <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
+        <div class="absolute -top-40 -right-40 w-[500px] h-[500px] bg-gradient-to-br from-primary/8 to-secondary/5 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-40 -left-40 w-[500px] h-[500px] bg-gradient-to-tr from-accent/6 to-primary/4 rounded-full blur-3xl"></div>
     </div>
 
     <div class="relative w-full max-w-md animate-fade-up">
 
         {{-- Logo & heading --}}
         <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-16 h-16 bg-[#1F4E79] rounded-2xl shadow-lg mb-4">
-                <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"/>
-                </svg>
-            </div>
-            <h1 class="text-2xl font-bold text-gray-900">Selamat Datang Kembali</h1>
-            <p class="text-gray-500 text-sm mt-1">Masuk ke akun KitaTanggap Anda</p>
+            <a href="/" class="inline-block">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#1F4E79] to-[#2E75B6] rounded-2xl shadow-lg shadow-primary/20 mb-4 transition hover:scale-105">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                    </svg>
+                </div>
+            </a>
+            <h1 class="text-2xl font-extrabold text-gray-900 dark:text-white">Selamat Datang Kembali</h1>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mt-1.5">Masuk ke akun <span class="font-semibold text-primary">Kita<span class="text-accent">Tanggap</span></span> Anda</p>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8"
+        <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl shadow-xl shadow-gray-200/50 dark:shadow-none border border-gray-100/80 dark:border-slate-700/80 p-8"
              x-data="loginForm()">
 
             {{-- Flash success --}}
             @if (session('success'))
-                <div class="mb-5 flex items-start gap-3 bg-green-50 border border-green-200 text-green-800 rounded-xl px-4 py-3 text-sm">
+                <div class="mb-5 flex items-start gap-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl px-4 py-3 text-sm animate-fade-in">
                     <svg class="w-5 h-5 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                     </svg>
@@ -39,9 +40,9 @@
                 </div>
             @endif
 
-            {{-- Peringatan akun dikunci dengan countdown --}}
+            {{-- Peringatan akun dikunci --}}
             @if (session('locked'))
-                <div class="mb-5 bg-red-50 border border-red-200 rounded-xl px-4 py-4 text-sm"
+                <div class="mb-5 bg-red-50 border border-red-200 rounded-xl px-4 py-4 text-sm animate-fade-in"
                      x-data="lockoutTimer({{ session('remaining_seconds', 900) }})">
                     <div class="flex items-start gap-3">
                         <svg class="w-5 h-5 text-red-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -60,7 +61,7 @@
 
             {{-- Error umum --}}
             @if ($errors->any())
-                <div class="mb-5 flex items-start gap-3 bg-red-50 border border-red-200 text-red-800 rounded-xl px-4 py-3 text-sm">
+                <div class="mb-5 flex items-start gap-3 bg-red-50 border border-red-200 text-red-800 rounded-xl px-4 py-3 text-sm animate-fade-in">
                     <svg class="w-5 h-5 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                     </svg>
@@ -76,17 +77,24 @@
                 @csrf
 
                 {{-- Email --}}
-                <div class="mb-4">
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1.5">
+                <div class="mb-5">
+                    <label for="email" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                         Alamat Email
                     </label>
-                    <input id="email" name="email" type="email"
-                           value="{{ old('email') }}"
-                           autocomplete="email" required autofocus
-                           placeholder="nama@email.com"
-                           class="input-brand w-full px-4 py-2.5 border rounded-xl text-sm text-gray-900 placeholder-gray-400
-                                  {{ $errors->has('email') ? 'border-red-400 bg-red-50' : 'border-gray-300' }}
-                                  transition focus:border-[#1F4E79]">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                            <svg class="w-4.5 h-4.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <input id="email" name="email" type="email"
+                               value="{{ old('email') }}"
+                               autocomplete="email" required autofocus
+                               placeholder="nama@email.com"
+                               class="input-brand w-full pl-11 pr-4 py-3 border rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500
+                                      {{ $errors->has('email') ? 'border-red-400 bg-red-50/50 dark:bg-red-900/20' : 'border-gray-200 dark:border-slate-600 bg-gray-50/50 dark:bg-slate-700/50' }}
+                                      transition focus:bg-white dark:focus:bg-slate-700">
+                    </div>
                     @error('email')
                         <p class="mt-1.5 text-xs text-red-600 flex items-center gap-1">
                             <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
@@ -96,21 +104,26 @@
                 </div>
 
                 {{-- Password --}}
-                <div class="mb-4">
-                    <div class="flex items-center justify-between mb-1.5">
-                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                        <a href="{{ route('password.request') }}" class="text-xs text-[#1F4E79] hover:underline font-medium">
+                <div class="mb-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <label for="password" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Password</label>
+                        <a href="{{ route('password.request') }}" class="text-xs text-primary hover:text-primary-dark hover:underline font-medium transition">
                             Lupa Password?
                         </a>
                     </div>
                     <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                            <svg class="w-4.5 h-4.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                        </div>
                         <input id="password" name="password"
                                :type="showPassword ? 'text' : 'password'"
                                autocomplete="current-password" required
                                placeholder="Masukkan password Anda"
-                               class="input-brand w-full px-4 py-2.5 pr-11 border rounded-xl text-sm text-gray-900 placeholder-gray-400 border-gray-300 transition focus:border-[#1F4E79]">
+                               class="input-brand w-full pl-11 pr-11 py-3 border border-gray-200 dark:border-slate-600 bg-gray-50/50 dark:bg-slate-700/50 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition focus:bg-white dark:focus:bg-slate-700">
                         <button type="button" @click="showPassword = !showPassword"
-                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition p-1">
                             <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
@@ -125,28 +138,28 @@
                 {{-- Ingat Saya --}}
                 <div class="flex items-center mb-6">
                     <input id="remember" name="remember" type="checkbox"
-                           class="custom-checkbox w-4 h-4 rounded border-gray-300 text-[#1F4E79] cursor-pointer">
-                    <label for="remember" class="ml-2 text-sm text-gray-600 cursor-pointer select-none">
+                           class="custom-checkbox w-4 h-4 rounded border-gray-300 text-primary cursor-pointer transition">
+                    <label for="remember" class="ml-2.5 text-sm text-gray-600 dark:text-gray-400 cursor-pointer select-none">
                         Ingat Saya selama 30 hari
                     </label>
                 </div>
 
                 {{-- Tombol Masuk --}}
                 <button type="submit"
-                        class="w-full py-3 px-6 bg-[#1F4E79] hover:bg-[#163859] active:scale-[0.98] text-white font-semibold rounded-xl
-                               transition duration-150 shadow-md hover:shadow-lg text-sm tracking-wide">
+                        class="w-full py-3 px-6 bg-gradient-to-r from-[#1F4E79] to-[#2E75B6] hover:from-[#163859] hover:to-[#1F4E79] active:scale-[0.98] text-white font-semibold rounded-xl
+                               transition duration-200 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 text-sm tracking-wide">
                     Masuk
                 </button>
             </form>
 
             {{-- Link daftar --}}
-            <p class="mt-5 text-center text-sm text-gray-500">
+            <p class="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
                 Belum punya akun?
-                <a href="{{ route('register') }}" class="text-[#1F4E79] font-semibold hover:underline">Daftar Akun Baru</a>
+                <a href="{{ route('register') }}" class="text-primary dark:text-blue-400 font-semibold hover:underline transition">Daftar Akun Baru</a>
             </p>
         </div>
 
-        <p class="mt-6 text-center text-xs text-gray-400">
+        <p class="mt-6 text-center text-xs text-gray-400 dark:text-gray-500">
             © {{ date('Y') }} KitaTanggap — Universitas Jenderal Soedirman
         </p>
     </div>

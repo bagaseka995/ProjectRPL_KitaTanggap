@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" x-data="themeHandler()" :class="{ 'dark': isDark }">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +11,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: { extend: {
                 colors: {
                     primary:   { DEFAULT: '#1F4E79', light: '#2E75B6', dark: '#163859' },
@@ -69,75 +70,35 @@
             box-shadow: 0 0 0 2px #2E75B6;
         }
     </style>
+    <script>
+        function themeHandler() {
+            return {
+                isDark: false,
+                init() {
+                    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                        this.isDark = true;
+                    } else {
+                        this.isDark = false;
+                    }
+                    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                        if (!localStorage.getItem('theme')) {
+                            this.isDark = e.matches;
+                        }
+                    });
+                },
+                toggleTheme() {
+                    this.isDark = !this.isDark;
+                    localStorage.setItem('theme', this.isDark ? 'dark' : 'light');
+                }
+            }
+        }
+    </script>
 </head>
-<body class="bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30 min-h-screen">
+<body class="bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30 dark:from-slate-900 dark:via-slate-800/80 dark:to-indigo-950/40 text-gray-800 dark:text-gray-100 transition-colors duration-300 min-h-screen">
 
 {{-- ═══ NAVBAR ═══ --}}
-<nav x-data="{ mobileMenuOpen: false }" class="bg-[#1F4E79] text-white shadow-lg sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-20">
-            <!-- Logo -->
-            <div class="flex-shrink-0 flex items-center gap-2">
-                <a href="/" class="flex items-center gap-2">
-                    <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                        </svg>
-                    </div>
-                    <span class="font-bold text-2xl text-white tracking-tight">Kita<span class="text-[#E28743]">Tanggap</span></span>
-                </a>
-            </div>
-
-            <!-- Desktop Menu -->
-            <div class="hidden md:flex space-x-8 items-center">
-                <a href="/#beranda" class="text-white/80 hover:text-white font-medium transition">Beranda</a>
-                <a href="{{ route('transparansi') }}" class="text-white font-medium border-b-2 border-[#E28743] pb-1 transition">Transparansi</a>
-                <a href="{{ route('peta') }}" class="text-white/80 hover:text-white font-medium transition">Peta Bencana</a>
-                
-                @auth
-                    <a href="{{ route('dashboard') }}" class="px-6 py-2.5 bg-[#C55A11] text-white font-medium rounded-full hover:bg-[#a34a0f] transition duration-300">
-                        Dashboard Saya
-                    </a>
-                @else
-                    <div class="flex items-center space-x-4 border-l pl-6 border-white/20">
-                        <a href="{{ route('login') }}" class="text-white/90 font-medium hover:text-white transition">Masuk</a>
-                        <a href="{{ route('register') }}" class="px-6 py-2.5 bg-[#C55A11] text-white font-medium rounded-full hover:bg-[#a34a0f] transition duration-300">
-                            Daftar
-                        </a>
-                    </div>
-                @endauth
-            </div>
-
-            <!-- Mobile menu button -->
-            <div class="md:hidden flex items-center">
-                <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-white hover:text-gray-200 focus:outline-none">
-                    <svg class="h-6 w-6" x-show="!mobileMenuOpen" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                    <svg class="h-6 w-6" x-show="mobileMenuOpen" style="display:none;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Mobile Menu -->
-    <div x-show="mobileMenuOpen" style="display:none;" class="md:hidden bg-[#163859] shadow-xl absolute w-full border-t border-white/10">
-        <div class="px-4 pt-2 pb-6 space-y-2">
-            <a href="/#beranda" class="block px-3 py-3 rounded-lg text-base font-medium text-white/90 hover:bg-white/10">Beranda</a>
-            <a href="{{ route('transparansi') }}" class="block px-3 py-3 rounded-lg text-base font-medium text-white/90 hover:bg-white/10">Transparansi</a>
-            <a href="{{ route('peta') }}" class="block px-3 py-3 rounded-lg text-base font-medium text-white/90 hover:bg-white/10">Peta Bencana</a>
-            <hr class="my-4 border-white/10">
-            @auth
-                <a href="{{ route('dashboard') }}" class="block w-full text-center px-4 py-3 bg-[#C55A11] text-white font-medium rounded-xl">Dashboard Saya</a>
-            @else
-                <a href="{{ route('login') }}" class="block w-full text-center px-4 py-3 border border-white/20 text-white font-medium rounded-xl mb-2">Masuk</a>
-                <a href="{{ route('register') }}" class="block w-full text-center px-4 py-3 bg-[#C55A11] text-white font-medium rounded-xl">Daftar Sekarang</a>
-            @endauth
-        </div>
-    </div>
-</nav>
+@include('layouts.partials.navbar-main')
+@include('layouts.partials.navbar-sub')
 
 {{-- ═══ HERO HEADER ═══ --}}
 <div class="bg-gradient-to-r from-[#1F4E79] via-[#2E75B6] to-[#3B82F6] text-white py-12 relative overflow-hidden">
@@ -340,7 +301,7 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                   d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                         </svg>
-                                        <a href="{{ asset($lap->bukti_distribusi) }}" target="_blank"
+                                        <a href="{{ $lap->bukti_url }}" target="_blank"
                                            class="text-xs font-semibold text-primary hover:underline">
                                             Lihat Bukti Distribusi →
                                         </a>

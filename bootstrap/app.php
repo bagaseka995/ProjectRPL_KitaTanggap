@@ -23,6 +23,13 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Sanctum stateful domains untuk SPA (opsional, siap untuk Increment 3)
         $middleware->statefulApi();
+
+        // Kecualikan webhook Midtrans dari CSRF verification
+        // (server Midtrans memanggil endpoint ini tanpa CSRF token)
+        $middleware->validateCsrfTokens(except: [
+            'api/donasi/notification',
+            'api/donasi/webhook',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

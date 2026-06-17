@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class LaporanDistribusi extends Model
 {
@@ -42,4 +43,29 @@ class LaporanDistribusi extends Model
     {
         return 'Rp ' . number_format((float) $this->jumlah_disalurkan, 0, ',', '.');
     }
+
+    /**
+     * URL publik untuk bukti distribusi.
+     * Handle dua format path:
+     * - Format lama: "storage/distribusi/filename.ext" (disimpan dengan prefix)
+     * - Format baru: "distribusi/filename.ext" (path relatif storage public)
+     */
+    public function getBuktiUrlAttribute(): ?string
+    {
+        if (!$this->bukti_distribusi) {
+            return null;
+        }
+
+        $path = $this->bukti_distribusi;
+
+        // Jika path dimulai dengan 'storage/', itu format lama
+        // Strip prefix 'storage/' dan gunakan path relatif untuk Storage::url()
+        if (str_starts_with($path, 'storage/')) {
+            $path = substr($path, strlen('storage/'));
+        }
+
+        // Generate URL via Storage facade (benar, tidak perlu symlink dengan route serve)
+        return route('storage.serve', ['path' => $path]);
+    }
 }
+

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
+<html lang="id" class="scroll-smooth" x-data="themeHandler()" :class="{ 'dark': isDark }">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +15,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -68,6 +69,10 @@
             -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.3);
         }
+        .dark .glass-nav {
+            background: rgba(15, 23, 42, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
         .hero-gradient {
             background: linear-gradient(135deg, #1F4E79 0%, #2E75B6 50%, #1a4166 100%);
         }
@@ -82,73 +87,36 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging-compat.js"></script>
     <script src="{{ asset('js/firebase-messaging.js') }}" defer></script>
+    
+    <script>
+        function themeHandler() {
+            return {
+                isDark: false,
+                init() {
+                    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                        this.isDark = true;
+                    } else {
+                        this.isDark = false;
+                    }
+                    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                        if (!localStorage.getItem('theme')) {
+                            this.isDark = e.matches;
+                        }
+                    });
+                },
+                toggleTheme() {
+                    this.isDark = !this.isDark;
+                    localStorage.setItem('theme', this.isDark ? 'dark' : 'light');
+                }
+            }
+        }
+    </script>
 </head>
-<body class="font-sans antialiased text-gray-800 bg-gray-50 selection:bg-brand-500 selection:text-white">
+<body class="font-sans antialiased text-gray-800 dark:text-gray-100 bg-gray-50 dark:bg-slate-900 transition-colors duration-300 selection:bg-brand-500 selection:text-white">
 
     <!-- Navbar -->
-    <nav x-data="{ mobileMenuOpen: false }" class="fixed w-full z-50 glass-nav transition-all duration-300" :class="{ 'shadow-sm': true }">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <!-- Logo -->
-                <div class="flex-shrink-0 flex items-center gap-2">
-                    <div class="w-10 h-10 bg-brand-700 rounded-xl flex items-center justify-center shadow-lg shadow-brand-500/30">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                        </svg>
-                    </div>
-                    <span class="font-heading font-bold text-2xl text-brand-900 tracking-tight">Kita<span class="text-accent-600">Tanggap</span></span>
-                </div>
-
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex space-x-8 items-center">
-                    <a href="#beranda" class="text-gray-600 hover:text-brand-600 font-medium transition">Beranda</a>
-                    <a href="{{ route('transparansi') }}" class="text-gray-600 hover:text-brand-600 font-medium transition">Transparansi</a>
-                    <a href="{{ route('peta') }}" class="text-gray-600 hover:text-brand-600 font-medium transition">Peta Bencana</a>
-                    
-                    @auth
-                        <a href="{{ route('dashboard') }}" class="px-6 py-2.5 bg-brand-700 text-white font-medium rounded-full hover:bg-brand-800 hover:shadow-lg hover:shadow-brand-500/30 transition duration-300 transform hover:-translate-y-0.5">
-                            Dashboard Saya
-                        </a>
-                    @else
-                        <div class="flex items-center space-x-4 border-l pl-6 border-gray-200">
-                            <a href="{{ route('login') }}" class="text-gray-700 font-medium hover:text-brand-600 transition">Masuk</a>
-                            <a href="{{ route('register') }}" class="px-6 py-2.5 bg-brand-700 text-white font-medium rounded-full hover:bg-brand-800 hover:shadow-lg hover:shadow-brand-500/30 transition duration-300 transform hover:-translate-y-0.5">
-                                Daftar Sekarang
-                            </a>
-                        </div>
-                    @endauth
-                </div>
-
-                <!-- Mobile menu button -->
-                <div class="md:hidden flex items-center">
-                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-gray-600 hover:text-brand-600 focus:outline-none">
-                        <svg class="h-6 w-6" x-show="!mobileMenuOpen" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                        </svg>
-                        <svg class="h-6 w-6" x-show="mobileMenuOpen" style="display:none;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Mobile Menu -->
-        <div x-show="mobileMenuOpen" style="display:none;" class="md:hidden bg-white border-b border-gray-100 shadow-xl absolute w-full">
-            <div class="px-4 pt-2 pb-6 space-y-2">
-                <a href="#beranda" class="block px-3 py-3 rounded-lg text-base font-medium text-gray-700 hover:bg-gray-50">Beranda</a>
-                <a href="{{ route('transparansi') }}" class="block px-3 py-3 rounded-lg text-base font-medium text-gray-700 hover:bg-gray-50">Transparansi</a>
-                <a href="{{ route('peta') }}" class="block px-3 py-3 rounded-lg text-base font-medium text-gray-700 hover:bg-gray-50">Peta Bencana</a>
-                <hr class="my-4 border-gray-100">
-                @auth
-                    <a href="{{ route('dashboard') }}" class="block w-full text-center px-4 py-3 bg-brand-700 text-white font-medium rounded-xl">Dashboard Saya</a>
-                @else
-                    <a href="{{ route('login') }}" class="block w-full text-center px-4 py-3 border border-gray-200 text-gray-700 font-medium rounded-xl mb-2">Masuk</a>
-                    <a href="{{ route('register') }}" class="block w-full text-center px-4 py-3 bg-brand-700 text-white font-medium rounded-xl">Daftar Sekarang</a>
-                @endauth
-            </div>
-        </div>
-    </nav>
+    @include('layouts.partials.navbar-main')
+    @include('layouts.partials.navbar-sub')
 
     <!-- Hero Section -->
     <section id="beranda" class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden hero-gradient">
@@ -209,62 +177,62 @@
     </section>
 
     <!-- Logo Cloud / Stats -->
-    <section class="py-10 bg-white border-b border-gray-100">
+    <section class="py-10 bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-800 transition-colors">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-gray-100">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-gray-100 dark:divide-slate-800">
                 <div class="p-4">
-                    <p class="text-3xl font-heading font-bold text-brand-700 mb-1">Rp 12M+</p>
-                    <p class="text-sm text-gray-500 font-medium">Donasi Tersalurkan</p>
+                    <p class="text-3xl font-heading font-bold text-brand-700 dark:text-brand-500 mb-1">Rp 12M+</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Donasi Tersalurkan</p>
                 </div>
                 <div class="p-4">
-                    <p class="text-3xl font-heading font-bold text-brand-700 mb-1">50+</p>
-                    <p class="text-sm text-gray-500 font-medium">Daerah Terbantu</p>
+                    <p class="text-3xl font-heading font-bold text-brand-700 dark:text-brand-500 mb-1">50+</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Daerah Terbantu</p>
                 </div>
                 <div class="p-4">
-                    <p class="text-3xl font-heading font-bold text-brand-700 mb-1">100%</p>
-                    <p class="text-sm text-gray-500 font-medium">Transparansi Dana</p>
+                    <p class="text-3xl font-heading font-bold text-brand-700 dark:text-brand-500 mb-1">100%</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Transparansi Dana</p>
                 </div>
                 <div class="p-4">
-                    <p class="text-3xl font-heading font-bold text-brand-700 mb-1">24/7</p>
-                    <p class="text-sm text-gray-500 font-medium">Pemantauan Bencana</p>
+                    <p class="text-3xl font-heading font-bold text-brand-700 dark:text-brand-500 mb-1">24/7</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Pemantauan Bencana</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Features Section -->
-    <section class="py-24 bg-gray-50 relative">
+    <section class="py-24 bg-gray-50 dark:bg-slate-900 transition-colors relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-16">
-                <h2 class="text-brand-600 font-semibold tracking-wide uppercase text-sm mb-3">Kenapa KitaTanggap?</h2>
-                <h3 class="font-heading text-3xl md:text-4xl font-bold text-gray-900 mb-6">Satu Platform, Berjuta Kebaikan</h3>
-                <p class="text-gray-600 text-lg">Kami mendesain ekosistem penanganan bencana yang aman, cepat, dan sepenuhnya transparan untuk memastikan bantuan Anda tepat sasaran.</p>
+                <h2 class="text-brand-600 dark:text-brand-400 font-semibold tracking-wide uppercase text-sm mb-3">Kenapa KitaTanggap?</h2>
+                <h3 class="font-heading text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6">Satu Platform, Berjuta Kebaikan</h3>
+                <p class="text-gray-600 dark:text-gray-400 text-lg">Kami mendesain ekosistem penanganan bencana yang aman, cepat, dan sepenuhnya transparan untuk memastikan bantuan Anda tepat sasaran.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-center mb-24">
                 <div class="order-2 md:order-1 relative">
-                    <div class="absolute -inset-4 bg-brand-100/50 rounded-3xl transform -rotate-3 transition duration-500 hover:rotate-0"></div>
-                    <img src="{{ asset('images/donation.png') }}" alt="Donasi Digital" class="relative rounded-3xl shadow-xl shadow-brand-900/10 w-full object-cover aspect-square md:aspect-[4/3] bg-white">
+                    <div class="absolute -inset-4 bg-brand-100/50 dark:bg-brand-900/30 rounded-3xl transform -rotate-3 transition duration-500 hover:rotate-0"></div>
+                    <img src="{{ asset('images/donation.png') }}" alt="Donasi Digital" class="relative rounded-3xl shadow-xl shadow-brand-900/10 dark:shadow-black/50 w-full object-cover aspect-square md:aspect-[4/3] bg-white dark:bg-slate-800">
                 </div>
                 <div class="order-1 md:order-2">
-                    <div class="w-14 h-14 bg-brand-100 rounded-2xl flex items-center justify-center text-brand-600 mb-6">
+                    <div class="w-14 h-14 bg-brand-100 dark:bg-brand-900/50 rounded-2xl flex items-center justify-center text-brand-600 dark:text-brand-400 mb-6">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
-                    <h3 class="font-heading text-3xl font-bold text-gray-900 mb-4">Donasi Digital Instan & Transparan</h3>
-                    <p class="text-gray-600 text-lg mb-6 leading-relaxed">
+                    <h3 class="font-heading text-3xl font-bold text-gray-900 dark:text-white mb-4">Donasi Digital Instan & Transparan</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-lg mb-6 leading-relaxed">
                         Kirimkan bantuan dana secara instan menggunakan berbagai metode pembayaran digital (Midtrans). Anda bisa melacak penggunaan donasi Anda secara publik melalui Laporan Distribusi kami.
                     </p>
                     <ul class="space-y-4">
                         <li class="flex items-start">
                             <svg class="w-6 h-6 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-gray-700">Dukungan E-Wallet (GoPay, OVO), VA, & Kartu Kredit.</span>
+                            <span class="text-gray-700 dark:text-gray-300">Dukungan E-Wallet (GoPay, OVO), VA, & Kartu Kredit.</span>
                         </li>
                         <li class="flex items-start">
                             <svg class="w-6 h-6 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-gray-700">Laporan pertanggungjawaban dana publik real-time.</span>
+                            <span class="text-gray-700 dark:text-gray-300">Laporan pertanggungjawaban dana publik real-time.</span>
                         </li>
                     </ul>
-                    <a href="{{ route('transparansi') }}" class="mt-8 inline-flex items-center text-brand-600 font-semibold hover:text-brand-800 transition">
+                    <a href="{{ route('transparansi') }}" class="mt-8 inline-flex items-center text-brand-600 dark:text-brand-400 font-semibold hover:text-brand-800 dark:hover:text-brand-300 transition">
                         Lihat Laporan Transparansi <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </a>
                 </div>
@@ -272,30 +240,30 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-center">
                 <div>
-                    <div class="w-14 h-14 bg-accent-100 rounded-2xl flex items-center justify-center text-accent-600 mb-6">
+                    <div class="w-14 h-14 bg-accent-100 dark:bg-accent-900/50 rounded-2xl flex items-center justify-center text-accent-600 dark:text-accent-400 mb-6">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     </div>
-                    <h3 class="font-heading text-3xl font-bold text-gray-900 mb-4">Manajemen Relawan Terpusat</h3>
-                    <p class="text-gray-600 text-lg mb-6 leading-relaxed">
+                    <h3 class="font-heading text-3xl font-bold text-gray-900 dark:text-white mb-4">Manajemen Relawan Terpusat</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-lg mb-6 leading-relaxed">
                         Kami menjaring relawan berkompetensi, mengatur penugasan ke area terdampak yang tepat, dan menerbitkan e-sertifikat terverifikasi atas kontribusi nyata mereka.
                     </p>
                     <ul class="space-y-4">
                         <li class="flex items-start">
                             <svg class="w-6 h-6 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-gray-700">Verifikasi keterampilan (Medis, Logistik, Evakuasi).</span>
+                            <span class="text-gray-700 dark:text-gray-300">Verifikasi keterampilan (Medis, Logistik, Evakuasi).</span>
                         </li>
                         <li class="flex items-start">
                             <svg class="w-6 h-6 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-gray-700">Sertifikat digital dengan QR Code yang valid secara publik.</span>
+                            <span class="text-gray-700 dark:text-gray-300">Sertifikat digital dengan QR Code yang valid secara publik.</span>
                         </li>
                     </ul>
-                    <a href="{{ route('register') }}" class="mt-8 inline-flex items-center text-accent-600 font-semibold hover:text-accent-700 transition">
+                    <a href="{{ route('register') }}" class="mt-8 inline-flex items-center text-accent-600 dark:text-accent-400 font-semibold hover:text-accent-700 dark:hover:text-accent-300 transition">
                         Daftar Sebagai Relawan <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </a>
                 </div>
                 <div class="relative">
-                    <div class="absolute -inset-4 bg-accent-100/50 rounded-3xl transform rotate-3 transition duration-500 hover:rotate-0"></div>
-                    <img src="{{ asset('images/volunteer.png') }}" alt="Relawan Komunitas" class="relative rounded-3xl shadow-xl shadow-accent-900/10 w-full object-cover aspect-square md:aspect-[4/3] bg-white">
+                    <div class="absolute -inset-4 bg-accent-100/50 dark:bg-accent-900/30 rounded-3xl transform rotate-3 transition duration-500 hover:rotate-0"></div>
+                    <img src="{{ asset('images/volunteer.png') }}" alt="Relawan Komunitas" class="relative rounded-3xl shadow-xl shadow-accent-900/10 dark:shadow-black/50 w-full object-cover aspect-square md:aspect-[4/3] bg-white dark:bg-slate-800">
                 </div>
             </div>
         </div>

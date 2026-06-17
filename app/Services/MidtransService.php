@@ -97,6 +97,38 @@ class MidtransService
     }
 
     /**
+     * Dapatkan status transaksi langsung dari Midtrans API.
+     *
+     * @param string $orderId
+     * @return array
+     * @throws \Exception
+     */
+    public function getTransactionStatus(string $orderId): array
+    {
+        $baseUrl = $this->isProduction
+            ? 'https://api.midtrans.com/v2'
+            : 'https://api.sandbox.midtrans.com/v2';
+
+        $response = Http::withBasicAuth($this->serverKey, '')
+            ->withHeaders([
+                'Accept'       => 'application/json',
+                'Content-Type' => 'application/json',
+            ])
+            ->get("{$baseUrl}/{$orderId}/status");
+
+        if ($response->failed()) {
+            Log::error('Midtrans Status API error', [
+                'status'   => $response->status(),
+                'body'     => $response->body(),
+                'order_id' => $orderId,
+            ]);
+            throw new \Exception('Gagal mendapatkan status transaksi Midtrans.');
+        }
+
+        return $response->json();
+    }
+
+    /**
      * Mapping status Midtrans ke status internal aplikasi.
      *
      * @param string $transactionStatus

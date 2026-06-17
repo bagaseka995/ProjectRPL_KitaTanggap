@@ -41,4 +41,8 @@ Route::prefix('donasi')->group(function () {
 
     // Ringkasan donasi per bencana
     Route::get('/{bencana_id}/summary', [DonationController::class, 'summary']); // GET /api/donasi/{bencana_id}/summary
+
+    // Cek status donasi & simulasi sukses (untuk development/testing)
+    Route::get('/check-status/{kode_transaksi}', [DonationController::class, 'checkStatus']);
+    Route::post('/simulate-success/{kode_transaksi}', [DonationController::class, 'simulateSuccess']);
 });

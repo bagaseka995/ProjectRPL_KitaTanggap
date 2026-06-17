@@ -22,6 +22,7 @@
                     <a href="{{ route('admin.relawan.index') }}" class="px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.relawan.*') ? 'bg-white/10 dark:bg-slate-800' : 'hover:bg-white/10 dark:hover:bg-slate-800' }} transition">Relawan</a>
                     <a href="{{ route('admin.penugasan.index') }}" class="px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.penugasan.*') ? 'bg-white/10 dark:bg-slate-800' : 'hover:bg-white/10 dark:hover:bg-slate-800' }} transition">Penugasan</a>
                     <a href="{{ route('admin.laporan-distribusi.index') }}" class="px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.laporan-distribusi.*') ? 'bg-white/10 dark:bg-slate-800' : 'hover:bg-white/10 dark:hover:bg-slate-800' }} transition">Laporan</a>
+                    <a href="{{ route('admin.bencana.index') }}" class="px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.bencana.*') ? 'bg-white/10 dark:bg-slate-800' : 'hover:bg-white/10 dark:hover:bg-slate-800' }} transition">Bencana</a>
                 @endif
                 <div class="h-5 w-px bg-white/20 mx-2"></div>
                 <a href="{{ route('pengaturan.notifikasi') }}" class="px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('pengaturan.*') ? 'bg-white/10 dark:bg-slate-800' : 'hover:bg-white/10 dark:hover:bg-slate-800' }} transition">Pengaturan</a>
@@ -73,6 +74,7 @@
                 <a href="{{ route('admin.relawan.index') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('admin.relawan.*') ? 'bg-white/10 dark:bg-slate-800' : 'hover:bg-white/10 dark:hover:bg-slate-800' }} transition">Relawan</a>
                 <a href="{{ route('admin.penugasan.index') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('admin.penugasan.*') ? 'bg-white/10 dark:bg-slate-800' : 'hover:bg-white/10 dark:hover:bg-slate-800' }} transition">Penugasan</a>
                 <a href="{{ route('admin.laporan-distribusi.index') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('admin.laporan-distribusi.*') ? 'bg-white/10 dark:bg-slate-800' : 'hover:bg-white/10 dark:hover:bg-slate-800' }} transition">Laporan</a>
+                <a href="{{ route('admin.bencana.index') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('admin.bencana.*') ? 'bg-white/10 dark:bg-slate-800' : 'hover:bg-white/10 dark:hover:bg-slate-800' }} transition">Bencana</a>
             @endif
             <a href="{{ route('pengaturan.notifikasi') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('pengaturan.*') ? 'bg-white/10 dark:bg-slate-800' : 'hover:bg-white/10 dark:hover:bg-slate-800' }} transition">Pengaturan</a>
             <form method="POST" action="{{ route('logout') }}" class="block w-full">

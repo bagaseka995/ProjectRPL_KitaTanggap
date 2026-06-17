@@ -8,31 +8,32 @@
 
     {{-- Latar dekorasi --}}
     <div class="absolute inset-0 overflow-hidden pointer-events-none">
-        <div class="absolute -top-40 -right-40 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
-        <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-secondary/10 rounded-full blur-3xl"></div>
+        <div class="absolute -top-40 -right-40 w-[500px] h-[500px] bg-gradient-to-br from-primary/8 to-secondary/5 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-40 -left-40 w-[500px] h-[500px] bg-gradient-to-tr from-secondary/6 to-primary/4 rounded-full blur-3xl"></div>
     </div>
 
     <div class="relative w-full max-w-md animate-fade-up">
 
         {{-- Logo & heading --}}
         <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-2xl shadow-lg mb-4">
-                <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"/>
-                </svg>
-            </div>
-            <h1 class="text-2xl font-bold text-gray-900">Bergabung dengan KitaTanggap</h1>
-            <p class="text-gray-500 text-sm mt-1">Buat akun untuk mulai berkontribusi</p>
+            <a href="/" class="inline-block">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#1F4E79] to-[#2E75B6] rounded-2xl shadow-lg shadow-primary/20 mb-4 transition hover:scale-105">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                    </svg>
+                </div>
+            </a>
+            <h1 class="text-2xl font-extrabold text-gray-900 dark:text-white">Bergabung dengan KitaTanggap</h1>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mt-1.5">Buat akun untuk mulai berkontribusi</p>
         </div>
 
         {{-- Kartu form --}}
-        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8"
+        <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl shadow-xl shadow-gray-200/50 dark:shadow-none border border-gray-100/80 dark:border-slate-700/80 p-8"
              x-data="registerForm()">
 
             {{-- Flash success --}}
             @if (session('success'))
-                <div class="mb-5 flex items-start gap-3 bg-green-50 border border-green-200 text-green-800 rounded-xl px-4 py-3 text-sm">
+                <div class="mb-5 flex items-start gap-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl px-4 py-3 text-sm animate-fade-in">
                     <svg class="w-5 h-5 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                     </svg>
@@ -45,16 +46,23 @@
 
                 {{-- Nama Lengkap --}}
                 <div class="mb-4">
-                    <label for="nama_lengkap" class="block text-sm font-medium text-gray-700 mb-1.5">
+                    <label for="nama_lengkap" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                         Nama Lengkap <span class="text-red-500">*</span>
                     </label>
-                    <input id="nama_lengkap" name="nama_lengkap" type="text"
-                           value="{{ old('nama_lengkap') }}"
-                           autocomplete="name" required
-                           placeholder="Masukkan nama lengkap Anda"
-                           class="input-brand w-full px-4 py-2.5 border rounded-xl text-sm text-gray-900 placeholder-gray-400
-                                  {{ $errors->has('nama_lengkap') ? 'border-red-400 bg-red-50' : 'border-gray-300' }}
-                                  transition focus:border-primary">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                            <svg class="w-4.5 h-4.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                        </div>
+                        <input id="nama_lengkap" name="nama_lengkap" type="text"
+                               value="{{ old('nama_lengkap') }}"
+                               autocomplete="name" required
+                               placeholder="Masukkan nama lengkap Anda"
+                               class="input-brand w-full pl-11 pr-4 py-3 border rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500
+                                      {{ $errors->has('nama_lengkap') ? 'border-red-400 bg-red-50/50 dark:bg-red-900/20' : 'border-gray-200 dark:border-slate-600 bg-gray-50/50 dark:bg-slate-700/50' }}
+                                      transition focus:bg-white dark:focus:bg-slate-700">
+                    </div>
                     @error('nama_lengkap')
                         <p class="mt-1.5 text-xs text-red-600 flex items-center gap-1">
                             <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
@@ -65,16 +73,23 @@
 
                 {{-- Email --}}
                 <div class="mb-4">
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1.5">
+                    <label for="email" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                         Alamat Email <span class="text-red-500">*</span>
                     </label>
-                    <input id="email" name="email" type="email"
-                           value="{{ old('email') }}"
-                           autocomplete="email" required
-                           placeholder="nama@email.com"
-                           class="input-brand w-full px-4 py-2.5 border rounded-xl text-sm text-gray-900 placeholder-gray-400
-                                  {{ $errors->has('email') ? 'border-red-400 bg-red-50' : 'border-gray-300' }}
-                                  transition focus:border-primary">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                            <svg class="w-4.5 h-4.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <input id="email" name="email" type="email"
+                               value="{{ old('email') }}"
+                               autocomplete="email" required
+                               placeholder="nama@email.com"
+                               class="input-brand w-full pl-11 pr-4 py-3 border rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500
+                                      {{ $errors->has('email') ? 'border-red-400 bg-red-50/50 dark:bg-red-900/20' : 'border-gray-200 dark:border-slate-600 bg-gray-50/50 dark:bg-slate-700/50' }}
+                                      transition focus:bg-white dark:focus:bg-slate-700">
+                    </div>
                     @error('email')
                         <p class="mt-1.5 text-xs text-red-600 flex items-center gap-1">
                             <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
@@ -85,15 +100,22 @@
 
                 {{-- No Telepon --}}
                 <div class="mb-4">
-                    <label for="no_telepon" class="block text-sm font-medium text-gray-700 mb-1.5">
-                        No. Telepon <span class="text-gray-400 font-normal">(opsional)</span>
+                    <label for="no_telepon" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                        No. Telepon <span class="text-gray-400 dark:text-gray-500 font-normal text-xs">(opsional)</span>
                     </label>
-                    <input id="no_telepon" name="no_telepon" type="tel"
-                           value="{{ old('no_telepon') }}"
-                           placeholder="08xxxxxxxxxx"
-                           class="input-brand w-full px-4 py-2.5 border rounded-xl text-sm text-gray-900 placeholder-gray-400
-                                  {{ $errors->has('no_telepon') ? 'border-red-400 bg-red-50' : 'border-gray-300' }}
-                                  transition focus:border-primary">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                            <svg class="w-4.5 h-4.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                            </svg>
+                        </div>
+                        <input id="no_telepon" name="no_telepon" type="tel"
+                               value="{{ old('no_telepon') }}"
+                               placeholder="08xxxxxxxxxx"
+                               class="input-brand w-full pl-11 pr-4 py-3 border rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500
+                                      {{ $errors->has('no_telepon') ? 'border-red-400 bg-red-50/50 dark:bg-red-900/20' : 'border-gray-200 dark:border-slate-600 bg-gray-50/50 dark:bg-slate-700/50' }}
+                                      transition focus:bg-white dark:focus:bg-slate-700">
+                    </div>
                     @error('no_telepon')
                         <p class="mt-1.5 text-xs text-red-600 flex items-center gap-1">
                             <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
@@ -104,13 +126,13 @@
 
                 {{-- Peran --}}
                 <div class="mb-4">
-                    <label for="peran" class="block text-sm font-medium text-gray-700 mb-1.5">
+                    <label for="peran" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                         Daftar Sebagai <span class="text-red-500">*</span>
                     </label>
                     <select id="peran" name="peran" required
-                            class="input-brand w-full px-4 py-2.5 border rounded-xl text-sm text-gray-900
-                                   {{ $errors->has('peran') ? 'border-red-400 bg-red-50' : 'border-gray-300' }}
-                                   transition focus:border-primary bg-white">
+                            class="input-brand w-full px-4 py-3 border rounded-xl text-sm text-gray-900 dark:text-white
+                                   {{ $errors->has('peran') ? 'border-red-400 bg-red-50/50 dark:bg-red-900/20' : 'border-gray-200 dark:border-slate-600 bg-gray-50/50 dark:bg-slate-700/50' }}
+                                   transition focus:bg-white dark:focus:bg-slate-700 cursor-pointer">
                         <option value="" disabled {{ old('peran') ? '' : 'selected' }}>— Pilih peran —</option>
                         <option value="relawan" {{ old('peran') === 'relawan' ? 'selected' : '' }}>
                             🤝 Relawan — Saya ingin membantu di lapangan
@@ -129,20 +151,25 @@
 
                 {{-- Password --}}
                 <div class="mb-4">
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1.5">
+                    <label for="password" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                         Password <span class="text-red-500">*</span>
                     </label>
                     <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                            <svg class="w-4.5 h-4.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                        </div>
                         <input id="password" name="password"
                                :type="showPassword ? 'text' : 'password'"
                                @input="checkStrength($event.target.value)"
                                autocomplete="new-password" required
                                placeholder="Min. 8 karakter, huruf & angka"
-                               class="input-brand w-full px-4 py-2.5 pr-11 border rounded-xl text-sm text-gray-900 placeholder-gray-400
-                                      {{ $errors->has('password') ? 'border-red-400 bg-red-50' : 'border-gray-300' }}
-                                      transition focus:border-primary">
+                               class="input-brand w-full pl-11 pr-11 py-3 border rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500
+                                      {{ $errors->has('password') ? 'border-red-400 bg-red-50/50 dark:bg-red-900/20' : 'border-gray-200 dark:border-slate-600 bg-gray-50/50 dark:bg-slate-700/50' }}
+                                      transition focus:bg-white dark:focus:bg-slate-700">
                         <button type="button" @click="showPassword = !showPassword"
-                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition p-1">
                             <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
@@ -154,26 +181,16 @@
                     </div>
 
                     {{-- Password strength indicator --}}
-                    <div class="mt-2" x-show="password.length > 0" x-cloak>
-                        <div class="flex gap-1 mb-1">
-                            <div class="h-1 flex-1 rounded-full bg-gray-200 overflow-hidden">
-                                <div class="strength-bar h-full rounded-full"
-                                     :style="{ width: strength >= 1 ? '100%' : '0%', backgroundColor: strengthColor }"></div>
-                            </div>
-                            <div class="h-1 flex-1 rounded-full bg-gray-200 overflow-hidden">
-                                <div class="strength-bar h-full rounded-full"
-                                     :style="{ width: strength >= 2 ? '100%' : '0%', backgroundColor: strengthColor }"></div>
-                            </div>
-                            <div class="h-1 flex-1 rounded-full bg-gray-200 overflow-hidden">
-                                <div class="strength-bar h-full rounded-full"
-                                     :style="{ width: strength >= 3 ? '100%' : '0%', backgroundColor: strengthColor }"></div>
-                            </div>
-                            <div class="h-1 flex-1 rounded-full bg-gray-200 overflow-hidden">
-                                <div class="strength-bar h-full rounded-full"
-                                     :style="{ width: strength >= 4 ? '100%' : '0%', backgroundColor: strengthColor }"></div>
-                            </div>
+                    <div class="mt-2.5" x-show="password.length > 0" x-cloak>
+                        <div class="flex gap-1.5 mb-1.5">
+                            <template x-for="i in 4" :key="i">
+                                <div class="h-1.5 flex-1 rounded-full bg-gray-200 overflow-hidden">
+                                    <div class="strength-bar h-full rounded-full"
+                                         :style="{ width: strength >= i ? '100%' : '0%', backgroundColor: strengthColor }"></div>
+                                </div>
+                            </template>
                         </div>
-                        <p class="text-xs" :style="{ color: strengthColor }" x-text="strengthLabel"></p>
+                        <p class="text-xs font-medium" :style="{ color: strengthColor }" x-text="strengthLabel"></p>
                     </div>
 
                     @error('password')
@@ -186,18 +203,23 @@
 
                 {{-- Konfirmasi Password --}}
                 <div class="mb-6">
-                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1.5">
+                    <label for="password_confirmation" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                         Konfirmasi Password <span class="text-red-500">*</span>
                     </label>
                     <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                            <svg class="w-4.5 h-4.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                            </svg>
+                        </div>
                         <input id="password_confirmation" name="password_confirmation"
                                :type="showConfirm ? 'text' : 'password'"
                                @input="checkMatch($event.target.value)"
                                autocomplete="new-password" required
                                placeholder="Ulangi password Anda"
-                               class="input-brand w-full px-4 py-2.5 pr-11 border rounded-xl text-sm text-gray-900 placeholder-gray-400 border-gray-300 transition focus:border-primary">
+                               class="input-brand w-full pl-11 pr-11 py-3 border border-gray-200 dark:border-slate-600 bg-gray-50/50 dark:bg-slate-700/50 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition focus:bg-white dark:focus:bg-slate-700">
                         <button type="button" @click="showConfirm = !showConfirm"
-                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition p-1">
                             <svg x-show="!showConfirm" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
@@ -208,28 +230,28 @@
                         </button>
                     </div>
                     <p x-show="matchMsg !== ''" x-cloak
-                       class="mt-1.5 text-xs flex items-center gap-1"
-                       :class="matchOk ? 'text-green-600' : 'text-red-600'"
+                       class="mt-1.5 text-xs flex items-center gap-1 font-medium"
+                       :class="matchOk ? 'text-emerald-600' : 'text-red-600'"
                        x-text="matchMsg"></p>
                 </div>
 
                 {{-- Tombol Daftar --}}
                 <button type="submit"
-                        class="w-full py-3 px-6 bg-[#1F4E79] hover:bg-[#163859] active:scale-[0.98] text-white font-semibold rounded-xl
-                               transition duration-150 shadow-md hover:shadow-lg text-sm tracking-wide">
+                        class="w-full py-3 px-6 bg-gradient-to-r from-[#1F4E79] to-[#2E75B6] hover:from-[#163859] hover:to-[#1F4E79] active:scale-[0.98] text-white font-semibold rounded-xl
+                               transition duration-200 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 text-sm tracking-wide">
                     Daftar Sekarang
                 </button>
             </form>
 
             {{-- Link ke login --}}
-            <p class="mt-5 text-center text-sm text-gray-500">
+            <p class="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
                 Sudah punya akun?
-                <a href="{{ route('login') }}" class="text-[#1F4E79] font-semibold hover:underline">Masuk di sini</a>
+                <a href="{{ route('login') }}" class="text-primary dark:text-blue-400 font-semibold hover:underline transition">Masuk di sini</a>
             </p>
         </div>
 
         {{-- Footer note --}}
-        <p class="mt-6 text-center text-xs text-gray-400">
+        <p class="mt-6 text-center text-xs text-gray-400 dark:text-gray-500">
             © {{ date('Y') }} KitaTanggap — Universitas Jenderal Soedirman
         </p>
     </div>

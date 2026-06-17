@@ -1,46 +1,27 @@
 @extends('layouts.auth')
 @section('title', 'Dashboard Admin — Penugasan Relawan')
 @section('content')
-<div class="min-h-screen bg-gray-50">
-    {{-- Navbar --}}
-    <nav class="bg-[#1F4E79] text-white shadow">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <span class="font-bold text-lg">KitaTanggap — Admin</span>
-                <div class="hidden md:flex gap-3 text-sm">
-                    <a href="{{ route('admin.relawan.index') }}" class="px-3 py-1 rounded hover:bg-[#2E75B6]/50 transition">Manajemen Relawan</a>
-                    <a href="{{ route('admin.penugasan.index') }}" class="px-3 py-1 rounded bg-[#2E75B6] font-medium transition">Penugasan Relawan</a>
-                    <a href="{{ route('admin.laporan-distribusi.index') }}" class="px-3 py-1 rounded hover:bg-[#2E75B6]/50 transition">Laporan Distribusi</a>
-                </div>
-            </div>
-            <form method="POST" action="{{ route('logout') }}">@csrf
-                <button class="text-sm opacity-75 hover:opacity-100 transition">Keluar</button>
-            </form>
-        </div>
-    </nav>
+<div class="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors duration-300">
+    @include('layouts.partials.navbar-main')
+    @include('layouts.partials.navbar-sub')
 
     {{-- Main Container --}}
     <div class="max-w-7xl mx-auto px-4 py-8" x-data="penugasanAdmin()" x-init="loadData()">
-        {{-- Navigation for Mobile --}}
-        <div class="flex md:hidden gap-2 mb-6 text-sm">
-            <a href="{{ route('admin.relawan.index') }}" class="flex-1 text-center py-2 rounded-lg bg-white border text-gray-700 hover:bg-gray-50">Relawan</a>
-            <a href="{{ route('admin.penugasan.index') }}" class="flex-1 text-center py-2 rounded-lg bg-[#1F4E79] text-white font-medium shadow-sm">Penugasan</a>
-        </div>
 
-        <h1 class="text-2xl font-bold text-gray-900 mb-6">Penugasan Relawan Bencana</h1>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Penugasan Relawan Bencana</h1>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {{-- Form Penugasan (Left Panel - 1 col on lg, top on mobile) --}}
             <div class="lg:col-span-1">
-                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sticky top-6">
-                    <h2 class="font-bold text-gray-800 text-lg mb-4 pb-2 border-b border-gray-100">Buat Penugasan Baru</h2>
+                <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm p-6 sticky top-6 transition-colors">
+                    <h2 class="font-bold text-gray-800 dark:text-gray-200 text-lg mb-4 pb-2 border-b border-gray-100 dark:border-slate-700">Buat Penugasan Baru</h2>
                     
                     <form @submit.prevent="submitForm()" class="space-y-4">
                         {{-- Bencana --}}
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1">Pilih Bencana <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Pilih Bencana <span class="text-red-500">*</span></label>
                             <select x-model="form.bencana_id" required
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#1F4E79] focus:ring-2 focus:ring-[#1F4E79]/20 transition">
+                                    class="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:border-[#1F4E79] dark:focus:border-blue-500 focus:ring-2 focus:ring-[#1F4E79]/20 dark:focus:ring-blue-500/20 text-gray-900 dark:text-white transition">
                                 <option value="">-- Pilih Bencana Aktif --</option>
                                 @foreach($bencana as $b)
                                     <option value="{{ $b->id }}">{{ $b->nama_bencana }} ({{ $b->lokasi }})</option>
@@ -50,9 +31,9 @@
 
                         {{-- Relawan --}}
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1">Pilih Relawan <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Pilih Relawan <span class="text-red-500">*</span></label>
                             <select x-model="form.relawan_id" required
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#1F4E79] focus:ring-2 focus:ring-[#1F4E79]/20 transition">
+                                    class="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:border-[#1F4E79] dark:focus:border-blue-500 focus:ring-2 focus:ring-[#1F4E79]/20 dark:focus:ring-blue-500/20 text-gray-900 dark:text-white transition">
                                 <option value="">-- Pilih Relawan Tersedia --</option>
                                 @foreach($relawan as $r)
                                     <option value="{{ $r->id }}">
@@ -60,26 +41,26 @@
                                     </option>
                                 @endforeach
                             </select>
-                            <p class="text-[10px] text-gray-400 mt-1">Hanya menampilkan relawan terverifikasi yang siap bertugas (ketersediaan=true).</p>
+                            <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1">Hanya menampilkan relawan terverifikasi yang siap bertugas (ketersediaan=true).</p>
                         </div>
 
                         {{-- Tanggal Tugas --}}
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Tugas <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Tanggal Tugas <span class="text-red-500">*</span></label>
                             <input type="date" x-model="form.tanggal_tugas" required min="{{ date('Y-m-d') }}"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#1F4E79] focus:ring-2 focus:ring-[#1F4E79]/20 transition">
+                                   class="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:border-[#1F4E79] dark:focus:border-blue-500 focus:ring-2 focus:ring-[#1F4E79]/20 dark:focus:ring-blue-500/20 text-gray-900 dark:text-white transition">
                         </div>
 
                         {{-- Catatan --}}
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1">Catatan Tugas (Opsional)</label>
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Catatan Tugas (Opsional)</label>
                             <textarea x-model="form.catatan" rows="3" placeholder="Instruksi khusus, lokasi posko, atau kebutuhan logistik..."
-                                      class="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#1F4E79] focus:ring-2 focus:ring-[#1F4E79]/20 transition"></textarea>
+                                      class="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:border-[#1F4E79] dark:focus:border-blue-500 focus:ring-2 focus:ring-[#1F4E79]/20 dark:focus:ring-blue-500/20 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition"></textarea>
                         </div>
 
                         {{-- Submit --}}
                         <button type="submit" :disabled="submitting"
-                                class="w-full py-2.5 bg-[#1F4E79] hover:bg-[#1F4E79]/90 text-white rounded-xl text-sm font-bold shadow-sm hover:shadow transition disabled:opacity-50 flex items-center justify-center gap-2">
+                                class="w-full py-2.5 bg-[#1F4E79] dark:bg-blue-600 hover:bg-[#1F4E79]/90 dark:hover:bg-blue-700 text-white rounded-xl text-sm font-bold shadow-sm hover:shadow transition disabled:opacity-50 flex items-center justify-center gap-2">
                             <svg x-show="submitting" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
@@ -93,9 +74,9 @@
             {{-- List & Filters (Right Panel - 2 cols on lg) --}}
             <div class="lg:col-span-2">
                 {{-- Filter bar --}}
-                <div class="bg-white rounded-2xl border border-gray-200 p-4 mb-5 flex flex-wrap items-center gap-3 shadow-sm">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-4 mb-5 flex flex-wrap items-center gap-3 shadow-sm transition-colors">
                     <select x-model="filter.bencana_id" @change="page=1; loadData()"
-                            class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#1F4E79] flex-1 min-w-[150px]">
+                            class="px-3 py-2 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:outline-none focus:border-[#1F4E79] dark:focus:border-blue-500 text-gray-900 dark:text-white flex-1 min-w-[150px]">
                         <option value="">Semua Bencana</option>
                         @foreach($bencana as $b)
                             <option value="{{ $b->id }}">{{ $b->nama_bencana }}</option>
@@ -103,7 +84,7 @@
                     </select>
 
                     <select x-model="filter.status" @change="page=1; loadData()"
-                            class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#1F4E79] flex-1 min-w-[120px]">
+                            class="px-3 py-2 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:outline-none focus:border-[#1F4E79] dark:focus:border-blue-500 text-gray-900 dark:text-white flex-1 min-w-[120px]">
                         <option value="">Semua Status</option>
                         <option value="ditugaskan">Ditugaskan</option>
                         <option value="berlangsung">Berlangsung</option>
@@ -112,13 +93,13 @@
                     </select>
 
                     <button @click="resetFilter()"
-                            class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg text-sm transition font-medium">
+                            class="px-4 py-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-600 dark:text-gray-300 rounded-lg text-sm transition font-medium">
                         ↺ Reset
                     </button>
                 </div>
 
                 {{-- Loading state --}}
-                <div x-show="loading" class="text-center py-12 text-gray-400 bg-white border border-gray-200 rounded-2xl shadow-sm">
+                <div x-show="loading" class="text-center py-12 text-gray-400 dark:text-gray-500 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl shadow-sm transition-colors">
                     <svg class="w-6 h-6 animate-spin mx-auto mb-2 text-[#1F4E79]" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
@@ -127,11 +108,11 @@
                 </div>
 
                 {{-- Assignments Table Card --}}
-                <div x-show="!loading" class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                <div x-show="!loading" class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm overflow-hidden transition-colors">
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm">
-                            <thead class="bg-gray-50 border-b border-gray-200">
-                                <tr class="text-left text-gray-600 text-xs uppercase tracking-wide">
+                            <thead class="bg-gray-50 dark:bg-slate-700/50 border-b border-gray-200 dark:border-slate-700">
+                                <tr class="text-left text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wide">
                                     <th class="px-4 py-3 font-semibold">Relawan</th>
                                     <th class="px-4 py-3 font-semibold">Misi Bencana</th>
                                     <th class="px-4 py-3 font-semibold">Tanggal Tugas</th>
@@ -143,28 +124,28 @@
                             <tbody>
                                 <template x-if="penugasan.length === 0">
                                     <tr>
-                                        <td colspan="6" class="px-4 py-12 text-center text-gray-400">
+                                        <td colspan="6" class="px-4 py-12 text-center text-gray-400 dark:text-gray-500">
                                             Tidak ada data penugasan relawan ditemukan.
                                         </td>
                                     </tr>
                                 </template>
                                 <template x-for="p in penugasan" :key="p.id">
-                                    <tr class="border-b border-gray-100 hover:bg-gray-50/50 transition">
+                                    <tr class="border-b border-gray-100 dark:border-slate-700 hover:bg-gray-50/50 dark:hover:bg-slate-700/50 transition">
                                         <td class="px-4 py-3">
-                                            <p class="font-semibold text-gray-900" x-text="p.relawan.user.nama_lengkap"></p>
-                                            <p class="text-xs text-gray-400" x-text="p.relawan.user.no_telepon"></p>
+                                            <p class="font-semibold text-gray-900 dark:text-white" x-text="p.relawan.user.nama_lengkap"></p>
+                                            <p class="text-xs text-gray-400 dark:text-gray-500" x-text="p.relawan.user.no_telepon"></p>
                                         </td>
                                         <td class="px-4 py-3">
-                                            <p class="font-semibold text-gray-900" x-text="p.bencana.nama_bencana"></p>
-                                            <p class="text-xs text-gray-400" x-text="p.bencana.lokasi"></p>
+                                            <p class="font-semibold text-gray-900 dark:text-white" x-text="p.bencana.nama_bencana"></p>
+                                            <p class="text-xs text-gray-400 dark:text-gray-500" x-text="p.bencana.lokasi"></p>
                                         </td>
-                                        <td class="px-4 py-3 text-gray-600 text-xs" x-text="p.tanggal_tugas.substring(0,10)"></td>
+                                        <td class="px-4 py-3 text-gray-600 dark:text-gray-300 text-xs" x-text="p.tanggal_tugas.substring(0,10)"></td>
                                         <td class="px-4 py-3">
                                             <span class="px-2 py-0.5 rounded text-[10px] font-bold text-white uppercase"
                                                   :style="'background-color:' + p.warna_status"
                                                   x-text="p.status_tugas"></span>
                                         </td>
-                                        <td class="px-4 py-3 text-gray-500 text-xs max-w-[150px] truncate" :title="p.catatan" x-text="p.catatan || '—'"></td>
+                                        <td class="px-4 py-3 text-gray-500 dark:text-gray-400 text-xs max-w-[150px] truncate" :title="p.catatan" x-text="p.catatan || '—'"></td>
                                         <td class="px-4 py-3 text-center whitespace-nowrap">
                                             <div class="flex items-center justify-center gap-1">
                                                 {{-- Button start mission --}}
@@ -198,7 +179,7 @@
                                                 </template>
 
                                                 <template x-if="p.status_tugas === 'selesai' || p.status_tugas === 'dibatalkan'">
-                                                    <span class="text-xs text-gray-400 italic">Selesai diproses</span>
+                                                    <span class="text-xs text-gray-400 dark:text-gray-500 italic">Selesai diproses</span>
                                                 </template>
                                             </div>
                                         </td>
@@ -209,15 +190,15 @@
                     </div>
 
                     {{-- Pagination --}}
-                    <div class="px-4 py-3 flex items-center justify-between border-t border-gray-100 text-sm text-gray-500">
+                    <div class="px-4 py-3 flex items-center justify-between border-t border-gray-100 dark:border-slate-700 text-sm text-gray-500 dark:text-gray-400">
                         <span>Halaman <span x-text="page"></span> dari <span x-text="lastPage"></span></span>
                         <div class="flex gap-2">
                             <button @click="page > 1 && (page--, loadData())"
                                     :disabled="page <= 1"
-                                    class="px-3 py-1.5 border rounded-lg disabled:opacity-40 hover:bg-gray-50 transition">← Sebelumnya</button>
+                                    class="px-3 py-1.5 border dark:border-slate-600 rounded-lg disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-slate-700 transition">← Sebelumnya</button>
                             <button @click="page < lastPage && (page++, loadData())"
                                     :disabled="page >= lastPage"
-                                    class="px-3 py-1.5 border rounded-lg disabled:opacity-40 hover:bg-gray-50 transition">Berikutnya →</button>
+                                    class="px-3 py-1.5 border dark:border-slate-600 rounded-lg disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-slate-700 transition">Berikutnya →</button>
                         </div>
                     </div>
                 </div>
