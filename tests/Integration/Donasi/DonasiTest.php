@@ -222,4 +222,42 @@ class DonasiTest extends IntegrationTestCase
             $this->assertNotEquals($donaturB->id, $donasi->user_id);
         }
     }
+
+    public function test_donatur_dapat_memilih_berbagai_metode_pembayaran()
+    {
+        Http::fake([
+            config('midtrans.api_url') => Http::response(['token' => 'mock-token'], 200),
+        ]);
+
+        $donatur = $this->createDonatur();
+        $bencana = $this->createBencanaAktif();
+
+        // Tes metode bayar e-wallet
+        $responseEwallet = $this->actingAs($donatur)->postJson('/api/donasi/create-order', [
+            'bencana_id' => $bencana->id,
+            'nominal' => 50000,
+            'nama_donatur' => 'Anonim',
+            'email_donatur' => 'anonim@mail.com',
+            'metode_pembayaran' => 'e_wallet'
+        ]);
+        $responseEwallet->assertStatus(200);
+        $this->assertDatabaseHas('donasi', [
+            'kode_transaksi' => $responseEwallet->json('kode_transaksi'),
+            'metode_pembayaran' => 'e_wallet'
+        ]);
+
+        // Tes metode bayar kartu kredit
+        $responseCC = $this->actingAs($donatur)->postJson('/api/donasi/create-order', [
+            'bencana_id' => $bencana->id,
+            'nominal' => 50000,
+            'nama_donatur' => 'Anonim',
+            'email_donatur' => 'anonim@mail.com',
+            'metode_pembayaran' => 'kartu_kredit'
+        ]);
+        $responseCC->assertStatus(200);
+        $this->assertDatabaseHas('donasi', [
+            'kode_transaksi' => $responseCC->json('kode_transaksi'),
+            'metode_pembayaran' => 'kartu_kredit'
+        ]);
+    }
 }

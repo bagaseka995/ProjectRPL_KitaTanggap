@@ -219,4 +219,46 @@ class ManajemenRelawanTest extends IntegrationTestCase
             $this->assertArrayHasKey('lokasi', $item['bencana']);
         }
     }
+
+    public function test_admin_dapat_memfilter_relawan()
+    {
+        $admin = $this->createAdmin();
+
+        $user1 = $this->createRelawan();
+        Relawan::factory()->create([
+            'user_id' => $user1->id,
+            'status_verifikasi' => 'terverifikasi',
+            'keahlian' => 'Medis, Dapur Umum',
+            'lokasi_domisili' => 'Bandung',
+        ]);
+
+        $user2 = $this->createRelawan();
+        Relawan::factory()->create([
+            'user_id' => $user2->id,
+            'status_verifikasi' => 'pending',
+            'keahlian' => 'Logistik, Evakuasi',
+            'lokasi_domisili' => 'Jakarta',
+        ]);
+
+        // Filter by lokasi = Bandung
+        $response = $this->actingAs($admin)->getJson('/api/relawan?lokasi=Bandung');
+        $response->assertStatus(200);
+        $data = $response->json('data.data');
+        $this->assertCount(1, $data);
+        $this->assertEquals('Bandung', $data[0]['lokasi_domisili']);
+
+        // Filter by keahlian = Logistik
+        $response2 = $this->actingAs($admin)->getJson('/api/relawan?keahlian=Logistik');
+        $response2->assertStatus(200);
+        $data2 = $response2->json('data.data');
+        $this->assertCount(1, $data2);
+        $this->assertStringContainsString('Logistik', $data2[0]['keahlian']);
+
+        // Filter by status = pending
+        $response3 = $this->actingAs($admin)->getJson('/api/relawan?status=pending');
+        $response3->assertStatus(200);
+        $data3 = $response3->json('data.data');
+        $this->assertCount(1, $data3);
+        $this->assertEquals('pending', $data3[0]['status_verifikasi']);
+    }
 }

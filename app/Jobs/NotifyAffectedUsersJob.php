@@ -39,7 +39,7 @@ class NotifyAffectedUsersJob implements ShouldQueue
             ->where('lokasi_domisili', 'LIKE', '%' . $this->bencana->lokasi . '%')
             ->get();
 
-        $fcmService = new FcmService();
+        $fcmService = app(FcmService::class);
 
         foreach ($users as $user) {
             Mail::to($user->email)->send(new BencanaAlert($this->bencana));

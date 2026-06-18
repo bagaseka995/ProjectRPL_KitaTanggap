@@ -234,4 +234,54 @@ class NotifikasiTest extends IntegrationTestCase
         // Assert: tabel jobs kosong
         $this->assertEquals(0, DB::table('jobs')->count());
     }
+
+    public function test_fcm_token_dapat_disimpan()
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->postJson('/api/fcm/register', [
+            'fcm_token' => 'dummy-fcm-token-12345'
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('user_fcm_tokens', [
+            'user_id' => $user->id,
+            'fcm_token' => 'dummy-fcm-token-12345'
+        ]);
+    }
+
+    public function test_push_notification_fcm_terkirim_saat_bencana_baru()
+    {
+        Mail::fake();
+
+        // Mock FcmService
+        $mock = \Mockery::mock('App\Services\FcmService');
+        $mock->shouldReceive('sendPushNotification')->once()->andReturn(true);
+        $this->app->instance('App\Services\FcmService', $mock);
+
+        $user = User::factory()->create([
+            'lokasi_domisili' => 'Surabaya',
+            'notif_aktif' => true,
+            'email_verified_at' => now(),
+        ]);
+
+        // Simulasikan user punya FCM token
+        \App\Models\UserFcmToken::create([
+            'user_id' => $user->id,
+            'fcm_token' => 'test-token-fcm'
+        ]);
+
+        $bencana = Bencana::factory()->create([
+            'nama_bencana' => 'Gempa Surabaya',
+            'lokasi' => 'Surabaya',
+            'status_siaga' => 'siaga',
+            'status_aktif' => true
+        ]);
+
+        // Jalankan Job secara manual
+        $job = new \App\Jobs\NotifyAffectedUsersJob($bencana);
+        $job->handle();
+        
+        $this->assertDatabaseHas('user_fcm_tokens', ['fcm_token' => 'test-token-fcm']);
+    }
 }
