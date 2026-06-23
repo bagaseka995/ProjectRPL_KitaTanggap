@@ -118,22 +118,7 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout')
     ->middleware('auth');
 
-// ─── Verifikasi Email (REQ-03) ───────────────────────────────────────────
-Route::get('/email/verify', function () {
-    return view('auth.verify-email');
-})->middleware('auth')->name('verification.notice');
 
-Route::get('/email/verify/{id}/{hash}', function (\Illuminate\Foundation\Auth\EmailVerificationRequest $request) {
-    $request->fulfill();
-    $user = $request->user();
-    $user->update(['status_akun' => 'aktif']);
-    return redirect()->route('login')->with('success', 'Email berhasil diverifikasi! Silakan masuk.');
-})->middleware(['auth', 'signed'])->name('verification.verify');
-
-Route::post('/email/verification-notification', function (\Illuminate\Http\Request $request) {
-    $request->user()->sendEmailVerificationNotification();
-    return back()->with('success', 'Link verifikasi telah dikirim ulang ke email Anda.');
-})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 // ─── Dashboard (placeholder — akan diisi di sprint berikutnya) ──────────
 Route::middleware(['auth'])->group(function () {
@@ -149,20 +134,20 @@ Route::middleware(['auth'])->group(function () {
         })->name('admin.dashboard');
     });
 
-    Route::middleware(['role:relawan', 'verified'])->group(function () {
+    Route::middleware(['role:relawan'])->group(function () {
         Route::get('/relawan/dashboard', function () {
             return view('dashboard.relawan');
         })->name('relawan.dashboard');
     });
 
-    Route::middleware(['role:donatur', 'verified'])->group(function () {
+    Route::middleware(['role:donatur'])->group(function () {
         Route::get('/donatur/dashboard', [DonorDashboardController::class, 'index'])->name('donatur.dashboard');
 
         Route::get('/dashboard/donatur/riwayat', [DonorDashboardController::class, 'history'])->name('donatur.riwayat');
     });
 
     // ─── Profil Relawan (REQ-12) ──────────────────────────────
-    Route::middleware(['role:relawan', 'verified'])->group(function () {
+    Route::middleware(['role:relawan'])->group(function () {
         Route::get('/relawan/profil', [RelawanController::class, 'profil'])->name('relawan.profil');
         Route::post('/relawan/profil', [RelawanController::class, 'store'])->name('relawan.profil.store');
         Route::put('/relawan/profil', [RelawanController::class, 'update'])->name('relawan.profil.update');

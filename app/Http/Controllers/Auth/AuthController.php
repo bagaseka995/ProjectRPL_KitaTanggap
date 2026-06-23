@@ -51,8 +51,6 @@ class AuthController extends Controller
             'email_verified_at' => null,
         ]);
 
-        event(new \Illuminate\Auth\Events\Registered($user));
-
         if ($request->wantsJson()) {
             return response()->json([
                 'status'  => 'success',
