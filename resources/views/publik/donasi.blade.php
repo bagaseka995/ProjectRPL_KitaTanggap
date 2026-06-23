@@ -500,10 +500,9 @@
                         <p class="text-sm text-gray-400 dark:text-gray-500 mb-6">
                             Kode transaksi: <strong class="text-primary dark:text-blue-400" x-text="kodeTransaksi"></strong>
                         </p>
-                        <div class="flex flex-col sm:flex-row gap-3 justify-center mb-6">
                             <button @click="checkStatus()"
                                     :disabled="loadingStatus"
-                                    class="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl transition flex items-center justify-center gap-2 shadow-md">
+                                    class="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl transition flex items-center justify-center gap-2 shadow-md w-full sm:w-auto">
                                 <svg x-show="loadingStatus" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
@@ -511,20 +510,14 @@
                                 <svg x-show="!loadingStatus" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-2 5a2 2 0 11-4 0 2 2 0 014 0zM9 17h6"/>
                                 </svg>
-                                Cek Status
+                                Cek Status Pembayaran
                             </button>
-                            <button @click="simulateSuccess()"
-                                    :disabled="loadingSuccess"
-                                    class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition flex items-center justify-center gap-2 shadow-md">
-                                <svg x-show="loadingSuccess" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
-                                </svg>
-                                <svg x-show="!loadingSuccess" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                </svg>
-                                Pembayaran Selesai
-                            </button>
+                        </div>
+                        <div class="mt-2 mb-6">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                STATUS: PENDING
+                            </span>
                         </div>
                         <div class="flex flex-col sm:flex-row gap-3 justify-center border-t border-gray-100 dark:border-slate-700/50 pt-6">
                             <button @click="resetForm()"
